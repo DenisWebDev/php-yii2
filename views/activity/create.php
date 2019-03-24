@@ -29,9 +29,6 @@ use yii\bootstrap\Html;
             <?= Html::submitButton('Отправить', ['class' => 'btn btn-primary']) ?>
         </div>
         <?php \yii\bootstrap\ActiveForm::end(); ?>
-
-        <br><br>
-        <?= Yii::getAlias('@logs/error.log') ?>
     </div>
 </div>
 

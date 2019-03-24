@@ -30,6 +30,7 @@ class ActivityComponent extends Component
     }
 
     public function createActivity(&$model, $post):bool {
+        /** @var Activity $model */
         if ($model->load($post) && $model->validate()) {
             return true;
         }
