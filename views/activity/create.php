@@ -24,6 +24,7 @@ use yii\bootstrap\Html;
         <?= $form->field($model, 'title') ?>
         <?= $form->field($model, 'description')->textarea() ?>
         <?= $form->field($model, 'date_start')->input('date') ?>
+        <?= $form->field($model, 'repeat_type')->dropDownList($model->getRepeatTypes()) ?>
         <?= $form->field($model, 'is_blocked')->checkbox() ?>
         <div class="form-group">
             <?= Html::submitButton('Отправить', ['class' => 'btn btn-primary']) ?>
