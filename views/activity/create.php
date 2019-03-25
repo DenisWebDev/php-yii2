@@ -36,6 +36,7 @@ use yii\bootstrap\Html;
         <div class="form-group">
             <?= Html::submitButton('Отправить', ['class' => 'btn btn-primary']) ?>
         </div>
+        <?=$form->field($model,'file')->fileInput()?>
         <?php \yii\bootstrap\ActiveForm::end(); ?>
     </div>
 </div>

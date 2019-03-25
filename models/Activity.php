@@ -30,6 +30,8 @@ class Activity extends BaseModel
 
     public $use_notification;
 
+    public $file;
+
     protected static $repeat_types = [
         0 => 'Без повтора',
         1 => 'Ежедневно',
@@ -65,6 +67,7 @@ class Activity extends BaseModel
             ['email','required','when' => function($model){
                 return $model->use_notification==1?true:false;
             }],
+            ['file','file','extensions' => ['jpg','png']],
 //            ['title','notAdmin'],
             [['title','description'],NotAdminRule::class],
             ['repeat_type','in','range' => array_keys(self::$repeat_types)]

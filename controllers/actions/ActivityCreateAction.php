@@ -32,11 +32,10 @@ class ActivityCreateAction extends Action
                 $model->load(\Yii::$app->request->post());
 //                print_r($model->validate()?'ok':'no');exit;
                 return ActiveForm::validate($model);
-
             }
 
             if ($comp->createActivity($model, \Yii::$app->request->post())) {
-
+                return $this->controller->render('view',['model'=>$model]);
             }
         }
 
