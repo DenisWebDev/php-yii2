@@ -14,6 +14,20 @@
 
 use yii\bootstrap\Html;
 
+$array=['2'=>'val1','two'=>['tr'=>'value sub']];
+
+$db=[['id'=>2,'name'=>'val1'],['id'=>3,'name'=>'val2']];
+
+//    echo isset($array['1'])?$array['1']:'';
+
+    echo \yii\helpers\ArrayHelper::getValue($array,'val2').'<br/>';
+
+    echo \yii\helpers\ArrayHelper::getValue($array,'two.tr');
+
+    $new_db=\yii\helpers\ArrayHelper::map($db,'id',function ($value){
+        return \yii\helpers\ArrayHelper::getValue($value,'name').' 1';
+    });
+    print_r($new_db);
 ?>
 
 <div class="row">
@@ -23,6 +37,8 @@ use yii\bootstrap\Html;
             'method' => 'post',
 //            'enableAjaxValidation' => true,
         ]); ?>
+        <?=\yii\helpers\Html::input('type','name_in','123',['class'=>'form-control']);?>
+
         <?= $form->field($model, 'title') ?>
         <?= $form->field($model, 'description')->textarea() ?>
         <?= $form->field($model, 'date_start'); ?>
