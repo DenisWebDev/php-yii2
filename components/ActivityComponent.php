@@ -10,6 +10,8 @@ namespace app\components;
 
 use app\models\Activity;
 use yii\base\Component;
+use yii\validators\EmailValidator;
+use yii\web\UploadedFile;
 
 class ActivityComponent extends Component
 {
@@ -29,10 +31,18 @@ class ActivityComponent extends Component
         return new $this->model_class;
     }
 
-    public function createActivity(&$model, $post):bool {
+    public function createActivity(&$model, $post): bool
+    {
         /** @var Activity $model */
-        if ($model->load($post) && $model->validate()) {
-            return true;
+        if ($model->load($post)) {
+            $model->file=UploadedFile::getInstance($model,'file');
+            if ($model->validate()) {
+                $comp=\Yii::createObject(['class'=>FileServiceComponent::class]);
+                if(!empty($file=$comp->saveUploadedFile($model->file))){
+                    $model->file=basename($file);
+                }
+                return true;
+            }
         }
         return false;
     }
