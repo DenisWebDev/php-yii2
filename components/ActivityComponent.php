@@ -10,6 +10,7 @@ namespace app\components;
 
 use app\models\Activity;
 use yii\base\Component;
+use yii\validators\EmailValidator;
 
 class ActivityComponent extends Component
 {
@@ -29,10 +30,13 @@ class ActivityComponent extends Component
         return new $this->model_class;
     }
 
-    public function createActivity(&$model, $post):bool {
+    public function createActivity(&$model, $post): bool
+    {
         /** @var Activity $model */
-        if ($model->load($post) && $model->validate()) {
-            return true;
+        if ($model->load($post)) {
+            if ($model->validate()) {
+                return true;
+            }
         }
         return false;
     }
