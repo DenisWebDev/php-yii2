@@ -25,7 +25,7 @@ class Day extends BaseModel
     public function rules()
     {
         return [
-            ['type', 'in', 'range' => array_keys($this->getTypes())],
+            ['type', 'in', 'range' => array_keys(static::$types)],
         ];
     }
 
