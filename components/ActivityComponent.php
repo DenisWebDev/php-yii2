@@ -31,13 +31,17 @@ class ActivityComponent extends Component
         return new $this->model_class;
     }
 
+    private function getStorage()
+    {
+        return \Yii::createObject(['class' => SessionStorageComponent::class]);
+    }
+
     public function createActivity(&$model, $post):bool {
         /** @var Activity $model */
         if ($model->load($post) && $model->validate()) {
             $model->images = UploadedFile::getInstances($model, 'images');
             if ($this->loadImages($model)) {
-                $component = \Yii::createObject(['class' => SessionStorageComponent::class]);
-                $component->save('activity_demo', $model);
+                $this->getStorage()->save('activity_demo', $model);
                 return true;
             }
         }
@@ -53,5 +57,10 @@ class ActivityComponent extends Component
             }
         }
         return true;
+    }
+
+    public function getActivity()
+    {
+        return $this->getStorage()->get('activity_demo', $this->getModel());
     }
 }

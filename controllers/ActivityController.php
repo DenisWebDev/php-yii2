@@ -26,15 +26,8 @@ class ActivityController extends BaseController
 
     public function actionIndex()
     {
-        /** @var ActivityComponent $component */
-        $component = \Yii::$app->activity;
-
         /** @var Activity $model */
-        $model = $component->getModel();
-
-        $component = \Yii::createObject(['class' => SessionStorageComponent::class]);
-
-        $model = $component->get('activity_demo', $model);
+        $model = \Yii::$app->activity->getActivity();
 
         return $this->render('index',
             ['model' => $model]
