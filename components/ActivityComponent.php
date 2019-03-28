@@ -38,11 +38,13 @@ class ActivityComponent extends Component
 
     public function createActivity(&$model, $post):bool {
         /** @var Activity $model */
-        if ($model->load($post) && $model->validate()) {
+        if ($model->load($post)) {
             $model->images = UploadedFile::getInstances($model, 'images');
-            if ($this->loadImages($model)) {
-                $this->getStorage()->save('activity_demo', $model);
-                return true;
+            if ($model->validate()) {
+                if ($this->loadImages($model)) {
+                    $this->getStorage()->save('activity_demo', $model);
+                    return true;
+                }
             }
         }
         return false;

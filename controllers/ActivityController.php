@@ -10,8 +10,6 @@ namespace app\controllers;
 
 
 use app\base\BaseController;
-use app\components\ActivityComponent;
-use app\components\SessionStorageComponent;
 use app\controllers\actions\ActivityCreateAction;
 use app\models\Activity;
 
