@@ -28,7 +28,9 @@ class Activity extends BaseModel
 
     public $is_blocked;
 
-    public $notify_phone;
+    public $use_notification;
+
+    public $email;
 
     protected static $repeat_types = [
         0 => 'Без повтора',
@@ -41,14 +43,16 @@ class Activity extends BaseModel
     public function rules()
     {
         return [
-            [['title', 'description', 'notify_phone'], 'trim'],
+            [['title', 'description', 'email'], 'trim'],
             [['title', 'date_start'], 'required'],
             ['description', 'string', 'max' => 255],
-            ['is_blocked', 'boolean'],
+            [['is_blocked', 'use_notification'], 'boolean'],
             ['repeat_type', 'in', 'range' => array_keys(static::$repeat_types)],
             [['date_start', 'date_end'], 'date', 'format' => 'php:d.m.Y'],
             [['date_start', 'date_end'], 'validateDates'],
-            ['notify_phone', PhoneRuRule::class],
+            ['email', 'required', 'when' => function($model) {
+                return $model->use_notification == 1 ? true : false;
+            }],
             ['images', 'file', 'mimeTypes' => 'image/*', 'maxFiles' => 10]
         ];
     }
@@ -62,16 +66,25 @@ class Activity extends BaseModel
             'date_end' => 'Дата окончания',
             'repeat_type' => 'Повтор',
             'is_blocked' => 'Блокирующее событие',
-            'notify_phone' => 'Уведомить по телефону',
+            'use_notification' => 'Уведомить о событии',
             'images' => 'Картинки'
         ];
     }
 
+    /**
+     * @param $attribute
+     * @throws \Exception
+     */
     public function validateDates($attribute) {
-        $date_start = \DateTime::createFromFormat('d.m.Y', $this->date_start)->setTime(0, 0, 0);
-        $date_end = \DateTime::createFromFormat('d.m.Y', $this->date_end)->setTime(0, 0, 0);
+        $date_start = \DateTime::createFromFormat('d.m.Y', $this->date_start);
+        $date_start = $date_start ? intval($date_start->format('Ymd')) : 0;
+
+        $date_end = \DateTime::createFromFormat('d.m.Y', $this->date_end);
+        $date_end = $date_end ? intval($date_end->format('Ymd')) : 0;
+
+        $current_date = intval((new \DateTime())->format('Ymd'));
+
         if ($attribute == 'date_start') {
-            $current_date = (new \DateTime())->setTime(0, 0, 0);
             if ($date_start && $date_start <= $current_date) {
                 $this->addError('date_start','Дата начала уже прошла');
             }

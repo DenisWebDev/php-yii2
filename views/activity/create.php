@@ -24,14 +24,18 @@ use dosamigos\datepicker\DatePicker;
         ]); ?>
         <?= $form->field($model, 'title') ?>
         <?= $form->field($model, 'description')->textarea() ?>
-        <?= $form->field($model, 'date_start')->widget(
+        <?= $form->field($model, 'date_start', [
+            'enableAjaxValidation' => true
+        ])->widget(
             DatePicker::class, [
                 'clientOptions' => [
                     'autoclose' => true,
                     'format' => 'dd.mm.yyyy'
                 ]
         ]) ?>
-        <?= $form->field($model, 'date_end')->widget(
+        <?= $form->field($model, 'date_end', [
+            'enableAjaxValidation' => true
+        ])->widget(
             DatePicker::class, [
             'clientOptions' => [
                 'autoclose' => true,
@@ -41,8 +45,10 @@ use dosamigos\datepicker\DatePicker;
         <?= $form->field($model, 'images[]')->fileInput(['multiple' => true, 'accept' =>'image/*']) ?>
         <?= $form->field($model, 'repeat_type')->dropDownList($model->getRepeatTypes()) ?>
         <?= $form->field($model, 'is_blocked')->checkbox() ?>
-        <?= $form->field($model, 'notify_phone', [
-            'enableAjaxValidation' => true
+        <?= $form->field($model, 'use_notification')->checkbox() ?>
+        <?= $form->field($model, 'email', [
+            'enableAjaxValidation' => true,
+            'enableClientValidation' => false
         ]) ?>
         <div class="form-group">
             <?= Html::submitButton('Отправить', ['class' => 'btn btn-primary']) ?>
