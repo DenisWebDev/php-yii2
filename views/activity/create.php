@@ -13,6 +13,7 @@
  */
 
 use yii\bootstrap\Html;
+use dosamigos\datepicker\DatePicker;
 ?>
 
 <div class="row">
@@ -23,9 +24,26 @@ use yii\bootstrap\Html;
         ]); ?>
         <?= $form->field($model, 'title') ?>
         <?= $form->field($model, 'description')->textarea() ?>
-        <?= $form->field($model, 'date_start')->input('date') ?>
+        <?= $form->field($model, 'date_start')->widget(
+            DatePicker::class, [
+                'clientOptions' => [
+                    'autoclose' => true,
+                    'format' => 'dd.mm.yyyy'
+                ]
+        ]) ?>
+        <?= $form->field($model, 'date_end')->widget(
+            DatePicker::class, [
+            'clientOptions' => [
+                'autoclose' => true,
+                'format' => 'dd.mm.yyyy'
+            ]
+        ]) ?>
+        <?= $form->field($model, 'images[]')->fileInput(['multiple' => true, 'accept' =>'image/*']) ?>
         <?= $form->field($model, 'repeat_type')->dropDownList($model->getRepeatTypes()) ?>
         <?= $form->field($model, 'is_blocked')->checkbox() ?>
+        <?= $form->field($model, 'notify_phone', [
+            'enableAjaxValidation' => true
+        ]) ?>
         <div class="form-group">
             <?= Html::submitButton('Отправить', ['class' => 'btn btn-primary']) ?>
         </div>

@@ -10,6 +10,7 @@ namespace app\models;
 
 
 use app\base\BaseModel;
+use app\models\rules\PhoneRuRule;
 
 class Activity extends BaseModel
 {
@@ -19,9 +20,15 @@ class Activity extends BaseModel
 
     public $date_start;
 
+    public $date_end;
+
+    public $images;
+
     public $repeat_type;
 
     public $is_blocked;
+
+    public $notify_phone;
 
     protected static $repeat_types = [
         0 => 'Без повтора',
@@ -34,27 +41,29 @@ class Activity extends BaseModel
     public function rules()
     {
         return [
-            ['title', 'required'],
-            ['description', 'string', 'min' => 10],
+            [['title', 'description', 'notify_phone'], 'trim'],
+            [['title', 'date_start'], 'required'],
+            ['description', 'string', 'max' => 255],
             ['is_blocked', 'boolean'],
             ['repeat_type', 'in', 'range' => array_keys(static::$repeat_types)],
             [['date_start', 'date_end'], 'date', 'format' => 'php:d.m.Y'],
             [['date_start', 'date_end'], 'validateDates'],
             ['notify_phone', PhoneRuRule::class],
             ['images', 'file', 'mimeTypes' => 'image/*', 'maxFiles' => 10]
-            ['repeat_type', 'in', 'range' => array_keys($this->getRepeatTypes())],
-            ['date_start', 'date', 'format' => 'php:Y-m-d'],
         ];
     }
 
     public function attributeLabels()
     {
         return [
-            'title' => 'Название активности',
+            'title' => 'Название',
             'description' => 'Описание',
             'date_start' => 'Дата начала',
+            'date_end' => 'Дата окончания',
             'repeat_type' => 'Повтор',
             'is_blocked' => 'Блокирующее событие',
+            'notify_phone' => 'Уведомить по телефону',
+            'images' => 'Картинки'
         ];
     }
 
