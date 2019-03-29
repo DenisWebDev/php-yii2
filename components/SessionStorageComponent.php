@@ -12,16 +12,35 @@ namespace app\components;
 use yii\base\Component;
 use yii\base\Model;
 
-class SessionStorageComponent extends Component
+class SessionStorageComponent extends Component implements StorageInterface
 {
-    public function save($key, Model $model) {
-        \Yii::$app->session->set($key, $model->attributes);
+    public function add($table, $data)
+    {
+       $storage_data = $this->getData($table);
+       $keys = array_keys($storage_data);
+       $key = reset($keys) + 1;
+       $storage_data[$key] = $data;
+       $this->setData($table, $storage_data);
+       return $key;
     }
 
-    public function get($key, Model $model) {
-        if ($data = \Yii::$app->session->get($key)) {
-            $model->attributes = $data;
-        }
-        return $model;
+    public function get($table, $id)
+    {
+        $storage_data = $this->getData($table);
+        return array_key_exists($id, $storage_data) ? $storage_data[$id] : [];
+    }
+
+    public function getList($table, $options = [])
+    {
+        return $this->getData($table);
+    }
+
+    private function getData($table)
+    {
+        return \Yii::$app->session->get('storage_'.$table, []);
+    }
+
+    private function setData($table, $data) {
+        \Yii::$app->session->set('storage_'.$table, $data);
     }
 }

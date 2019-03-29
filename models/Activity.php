@@ -11,6 +11,8 @@ namespace app\models;
 
 use app\base\BaseModel;
 use app\models\rules\PhoneRuRule;
+use yii\db\Query;
+use yii\helpers\ArrayHelper;
 
 class Activity extends BaseModel
 {
@@ -24,21 +26,13 @@ class Activity extends BaseModel
 
     public $images;
 
-    public $repeat_type;
+    public $repeat_type_id;
 
     public $is_blocked;
 
     public $use_notification;
 
     public $email;
-
-    protected static $repeat_types = [
-        0 => 'Без повтора',
-        1 => 'Ежедневно',
-        2 => 'Еженедельно',
-        3 => 'Ежемесячно',
-        4 => 'Ежегодно'
-    ];
 
     public function rules()
     {
@@ -47,7 +41,7 @@ class Activity extends BaseModel
             [['title', 'date_start'], 'required'],
             ['description', 'string', 'max' => 255],
             [['is_blocked', 'use_notification'], 'boolean'],
-            ['repeat_type', 'in', 'range' => array_keys(static::$repeat_types)],
+            ['repeat_type_id', 'in', 'range' => array_keys(static::getRepeatTypes())],
             [['date_start', 'date_end'], 'date', 'format' => 'php:d.m.Y'],
             [['date_start', 'date_end'], 'validateDates'],
             ['email', 'required', 'when' => function($model) {
@@ -64,7 +58,7 @@ class Activity extends BaseModel
             'description' => 'Описание',
             'date_start' => 'Дата начала',
             'date_end' => 'Дата окончания',
-            'repeat_type' => 'Повтор',
+            'repeat_type_id' => 'Повтор',
             'is_blocked' => 'Блокирующее событие',
             'use_notification' => 'Уведомить о событии',
             'images' => 'Картинки'
@@ -97,7 +91,13 @@ class Activity extends BaseModel
     }
 
     public function getRepeatTypes() {
-        return static::$repeat_types;
+        static $repeat_types;
+        if (!isset($repeat_types)) {
+            $repeat_types = (new Query())->select('*')
+                ->from('activity_repeat_type')->all();
+            $repeat_types = ArrayHelper::map($repeat_types, 'id', 'name');
+        }
+        return $repeat_types;
     }
 
     public function getRepeatType($id) {

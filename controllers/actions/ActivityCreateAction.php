@@ -32,9 +32,9 @@ class ActivityCreateAction extends Action
                 $model->load(\Yii::$app->request->post());
                 return ActiveForm::validate($model);
             }
-            if ($component->createActivity($model, \Yii::$app->request->post())) {
+            if ($id = $component->createActivity($model, \Yii::$app->request->post())) {
                 \Yii::$app->session->setFlash('success', 'Success');
-                return $this->controller->redirect(Url::to(['activity/index']));
+                return $this->controller->redirect(Url::to(['activity/view', 'id' => $id]));
             }
         }
 

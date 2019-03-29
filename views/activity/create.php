@@ -43,7 +43,7 @@ use dosamigos\datepicker\DatePicker;
             ]
         ]) ?>
         <?= $form->field($model, 'images[]')->fileInput(['multiple' => true, 'accept' =>'image/*']) ?>
-        <?= $form->field($model, 'repeat_type')->dropDownList($model->getRepeatTypes()) ?>
+        <?= $form->field($model, 'repeat_type_id')->dropDownList($model->getRepeatTypes()) ?>
         <?= $form->field($model, 'is_blocked')->checkbox() ?>
         <?= $form->field($model, 'use_notification')->checkbox() ?>
         <?= $form->field($model, 'email', [
