@@ -10,7 +10,6 @@ namespace app\components;
 
 
 use yii\base\Component;
-use yii\base\Model;
 use yii\db\Query;
 
 class MySqlStorageComponent extends Component implements StorageInterface
@@ -23,17 +22,6 @@ class MySqlStorageComponent extends Component implements StorageInterface
      */
     public function add($table, $data)
     {
-        // TODO временно готовим данные тут
-        $data['user_id'] = 1;
-        unset($data['images']);
-        if ($data['date_start']) {
-            $data['date_start'] = \DateTime::createFromFormat('d.m.Y', $data['date_start'])
-                ->format('Y-m-d');
-        }
-        if ($data['date_end']) {
-            $data['date_end'] = \DateTime::createFromFormat('d.m.Y', $data['date_end'])
-                ->format('Y-m-d');
-        }
         \Yii::$app->db->createCommand()
             ->insert($table, $data)
             ->execute();

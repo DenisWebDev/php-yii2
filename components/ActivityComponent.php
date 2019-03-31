@@ -10,7 +10,6 @@ namespace app\components;
 
 use app\models\Activity;
 use yii\base\Component;
-use yii\helpers\VarDumper;
 use yii\web\UploadedFile;
 
 class ActivityComponent extends Component
@@ -44,7 +43,7 @@ class ActivityComponent extends Component
             $model->images = UploadedFile::getInstances($model, 'images');
             if ($model->validate()) {
                 if ($this->loadImages($model)) {
-                    if ($id = $this->getStorage()->add('activity', $model->attributes)) {
+                    if ($id = $this->getStorage()->add('activity', $model->getDataForStorage())) {
                         return $id;
                     }
                 }
@@ -69,7 +68,7 @@ class ActivityComponent extends Component
         /** @var Activity $model */
         $model = $this->getModel();
         if ($data = $this->getStorage()->get('activity', $id)) {
-            $model->attributes = $data;
+            $model->loadFromStorageData($data);
         }
         return $model;
     }

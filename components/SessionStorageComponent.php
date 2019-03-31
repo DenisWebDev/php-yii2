@@ -10,7 +10,6 @@ namespace app\components;
 
 
 use yii\base\Component;
-use yii\base\Model;
 
 class SessionStorageComponent extends Component implements StorageInterface
 {

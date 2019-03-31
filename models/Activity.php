@@ -10,7 +10,6 @@ namespace app\models;
 
 
 use app\base\BaseModel;
-use app\models\rules\PhoneRuRule;
 use yii\db\Query;
 use yii\helpers\ArrayHelper;
 
@@ -88,6 +87,39 @@ class Activity extends BaseModel
                 $this->addError('date_end','Дата окончания не может быть меньше даты начала');
             }
         }
+    }
+
+    public function getDataForStorage() {
+        $data = $this->attributes;
+
+        $data['user_id'] = 1;
+
+        // TODO картинки пока не храним
+        unset($data['images']);
+
+        $data['date_start'] = \DateTime::createFromFormat('d.m.Y', $data['date_start'])
+            ->format('Y-m-d');
+
+        if ($data['date_end']) {
+            $data['date_end'] = \DateTime::createFromFormat('d.m.Y', $data['date_end'])
+                ->format('Y-m-d');
+        }
+
+        return $data;
+    }
+
+    public function loadFromStorageData($data) {
+        $data['images'] = array();
+
+        $data['date_start'] = \DateTime::createFromFormat('Y-m-d H:i:s', $data['date_start'])
+            ->format('d.m.Y');
+
+        if ($data['date_end']) {
+            $data['date_end'] = \DateTime::createFromFormat('Y-m-d H:i:s', $data['date_end'])
+                ->format('d.m.Y');
+        }
+
+        $this->attributes = $data;
     }
 
     public function getRepeatTypes() {
