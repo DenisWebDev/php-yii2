@@ -18,12 +18,18 @@
 <p><a href="<?= \yii\helpers\Url::to(['dao/add']) ?>">Наполнить данными</a></p>
 <?php if ($data): ?>
     <p>
-        <a href="<?= \yii\helpers\Url::to(['dao/index']) ?>?user_id=<?= $rand_user_id ?>">
+        <a href="<?= \yii\helpers\Url::to([
+            'dao/index',
+            'user_id' => $rand_user_id
+        ]) ?>">
             Найти все события пользователя ID <?= $rand_user_id ?>
         </a>
     </p>
     <p>
-        <a href="<?= \yii\helpers\Url::to(['dao/index']) ?>?user_email=<?= $rand_user_email ?>">
+        <a href="<?= \yii\helpers\Url::to([
+            'dao/index',
+            'user_email' => $rand_user_email
+        ]) ?>">
             Найти все события пользователя email <?= $rand_user_email ?>
         </a>
     </p>
