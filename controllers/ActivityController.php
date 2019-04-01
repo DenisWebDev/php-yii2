@@ -11,7 +11,6 @@ namespace app\controllers;
 
 use app\base\BaseController;
 use app\controllers\actions\ActivityCreateAction;
-use app\models\Activity;
 
 class ActivityController extends BaseController
 {
@@ -24,10 +23,14 @@ class ActivityController extends BaseController
 
     public function actionIndex()
     {
-        /** @var Activity $model */
-        $model = \Yii::$app->activity->getActivity();
+        return $this->render('index');
+    }
 
-        return $this->render('index',
+    public function actionView($id) {
+
+        $model = \Yii::$app->activity->getActivity($id);
+
+        return $this->render('view',
             ['model' => $model]
         );
     }

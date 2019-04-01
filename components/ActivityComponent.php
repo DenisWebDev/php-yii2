@@ -10,7 +10,6 @@ namespace app\components;
 
 use app\models\Activity;
 use yii\base\Component;
-use yii\helpers\VarDumper;
 use yii\web\UploadedFile;
 
 class ActivityComponent extends Component
@@ -33,17 +32,20 @@ class ActivityComponent extends Component
 
     private function getStorage()
     {
-        return \Yii::createObject(['class' => SessionStorageComponent::class]);
+        return \Yii::createObject([
+            'class' => \Yii::$app->params['activityStorageComponent']
+        ]);
     }
 
-    public function createActivity(&$model, $post):bool {
+    public function createActivity(&$model, $post) {
         /** @var Activity $model */
         if ($model->load($post)) {
             $model->images = UploadedFile::getInstances($model, 'images');
             if ($model->validate()) {
                 if ($this->loadImages($model)) {
-                    $this->getStorage()->save('activity_demo', $model);
-                    return true;
+                    if ($id = $this->getStorage()->add('activity', $model->getDataForStorage())) {
+                        return $id;
+                    }
                 }
             }
         }
@@ -61,8 +63,13 @@ class ActivityComponent extends Component
         return true;
     }
 
-    public function getActivity()
+    public function getActivity($id)
     {
-        return $this->getStorage()->get('activity_demo', $this->getModel());
+        /** @var Activity $model */
+        $model = $this->getModel();
+        if ($data = $this->getStorage()->get('activity', $id)) {
+            $model->loadFromStorageData($data);
+        }
+        return $model;
     }
 }
