@@ -20,6 +20,10 @@ $config = [
             'class' => app\components\ActivityComponent::class,
             'model_class' => \app\models\Activity::class
         ],
+        'rbac'=>['class'=>\app\components\RbacComponent::class],
+        'authManager'=>[
+            'class'=>\yii\rbac\DbManager::class
+        ],
         'request' => [
             // !!! insert a secret key in the following (if it is empty) - this is required by cookie validation
             'cookieValidationKey' => 'dFEEoIOf-J3Sxs7K5hLznIpVS6xSh-sk',
