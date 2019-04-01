@@ -36,7 +36,6 @@ class UsersBase extends \yii\db\ActiveRecord
             [['date_add'], 'safe'],
             [['email', 'password_hash', 'token'], 'string', 'max' => 255],
             [['auth_key'], 'string', 'max' => 32],
-            [['email'], 'unique'],
             [['token'], 'unique'],
         ];
     }

@@ -27,7 +27,40 @@ class AuthComponent extends Component
      * @param $model Users
      * @return bool
      */
+    public function authUser(&$model):bool{
+        $model->setAuthScenario();
+        if(!$model->validate(['email','password'])){
+            return false;
+        }
+        $password=$model->password;
+
+        $model=$model::findOne(['email'=>$model->email]);
+
+        if(!$this->checkPassword($password,$model->password_hash)){
+            $model->addError('password','Пароль не пршел проверку');
+            return false;
+        }
+
+        if(!\Yii::$app->user->login($model,3600)){
+            return false;
+        }
+
+        return true;
+
+
+    }
+
+
+    private function checkPassword($password,$password_hash):bool{
+        return \Yii::$app->security->validatePassword($password,$password_hash);
+    }
+
+    /**
+     * @param $model Users
+     * @return bool
+     */
     public function createUser(&$model):bool{
+        $model->setRgisterScenario();
         if(!$model->validate(['password','email'])){
             return false;
         }
