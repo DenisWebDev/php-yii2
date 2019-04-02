@@ -13,55 +13,29 @@ use app\base\BaseModel;
 use yii\db\Query;
 use yii\helpers\ArrayHelper;
 
-class Activity extends BaseModel
+class Activity extends ActivityBase
 {
-    public $title;
-
-    public $description;
-
-    public $date_start;
-
-    public $date_end;
 
     public $images;
 
-    public $repeat_type_id;
-
-    public $is_blocked;
-
-    public $use_notification;
-
-    public $email;
 
     public function rules()
     {
-        return [
+        return array_merge([
             [['title', 'description', 'email'], 'trim'],
             [['title', 'date_start'], 'required'],
             ['description', 'string', 'max' => 255],
             [['is_blocked', 'use_notification'], 'boolean'],
-            ['repeat_type_id', 'in', 'range' => array_keys(static::getRepeatTypes())],
+            ['repeat_type_id', 'in', 'range' => array_keys(
+                ArrayHelper::map($this->getRepeatType()->asArray()->all(),
+                    'id','name'))],
             [['date_start', 'date_end'], 'date', 'format' => 'php:d.m.Y'],
             [['date_start', 'date_end'], 'validateDates'],
             ['email', 'required', 'when' => function($model) {
                 return $model->use_notification == 1 ? true : false;
             }],
             ['images', 'file', 'mimeTypes' => 'image/*', 'maxFiles' => 10]
-        ];
-    }
-
-    public function attributeLabels()
-    {
-        return [
-            'title' => 'Название',
-            'description' => 'Описание',
-            'date_start' => 'Дата начала',
-            'date_end' => 'Дата окончания',
-            'repeat_type_id' => 'Повтор',
-            'is_blocked' => 'Блокирующее событие',
-            'use_notification' => 'Уведомить о событии',
-            'images' => 'Картинки'
-        ];
+        ],parent::rules());
     }
 
     /**
@@ -122,18 +96,18 @@ class Activity extends BaseModel
         $this->attributes = $data;
     }
 
-    public function getRepeatTypes() {
-        static $repeat_types;
-        if (!isset($repeat_types)) {
-            $repeat_types = (new Query())->select('*')
-                ->from('activity_repeat_type')->all();
-            $repeat_types = ArrayHelper::map($repeat_types, 'id', 'name');
-        }
-        return $repeat_types;
-    }
-
-    public function getRepeatType($id) {
-        $data = $this->getRepeatTypes();
-        return array_key_exists($id, $data) ? $data[$id] : false;
-    }
+//    public function getRepeatTypes() {
+//        static $repeat_types;
+//        if (!isset($repeat_types)) {
+//            $repeat_types = (new Query())->select('*')
+//                ->from('activity_repeat_type')->all();
+//            $repeat_types = ArrayHelper::map($repeat_types, 'id', 'name');
+//        }
+//        return $repeat_types;
+//    }
+//
+//    public function getRepeatTypeName($id) {
+//        $data = $this->getRepeatTypes();
+//        return array_key_exists($id, $data) ? $data[$id] : false;
+//    }
 }
