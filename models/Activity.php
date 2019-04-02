@@ -9,33 +9,15 @@
 namespace app\models;
 
 
-use app\base\BaseModel;
-use yii\db\Query;
 use yii\helpers\ArrayHelper;
 
-class Activity extends BaseModel
+class Activity extends ActivityBase
 {
-    public $title;
-
-    public $description;
-
-    public $date_start;
-
-    public $date_end;
-
     public $images;
-
-    public $repeat_type_id;
-
-    public $is_blocked;
-
-    public $use_notification;
-
-    public $email;
 
     public function rules()
     {
-        return [
+        return array_merge([
             [['title', 'description', 'email'], 'trim'],
             [['title', 'date_start'], 'required'],
             ['description', 'string', 'max' => 255],
@@ -47,12 +29,12 @@ class Activity extends BaseModel
                 return $model->use_notification == 1 ? true : false;
             }],
             ['images', 'file', 'mimeTypes' => 'image/*', 'maxFiles' => 10]
-        ];
+        ], parent::rules());
     }
 
     public function attributeLabels()
     {
-        return [
+        return array_merge(parent::attributeLabels(), [
             'title' => 'Название',
             'description' => 'Описание',
             'date_start' => 'Дата начала',
@@ -61,7 +43,7 @@ class Activity extends BaseModel
             'is_blocked' => 'Блокирующее событие',
             'use_notification' => 'Уведомить о событии',
             'images' => 'Картинки'
-        ];
+        ]);
     }
 
     /**
@@ -125,15 +107,11 @@ class Activity extends BaseModel
     public function getRepeatTypes() {
         static $repeat_types;
         if (!isset($repeat_types)) {
-            $repeat_types = (new Query())->select('*')
-                ->from('activity_repeat_type')->all();
+            $repeat_types = ActivityRepeatType::find()->asArray()->all();
             $repeat_types = ArrayHelper::map($repeat_types, 'id', 'name');
         }
         return $repeat_types;
     }
 
-    public function getRepeatType($id) {
-        $data = $this->getRepeatTypes();
-        return array_key_exists($id, $data) ? $data[$id] : false;
-    }
+
 }
