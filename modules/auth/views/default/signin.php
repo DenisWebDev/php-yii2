@@ -31,6 +31,9 @@ use yii\bootstrap\Html; ?>
             ]) ?>
         </div>
 
+        <p><b>admin@site.ru / 123456</b></p>
+        <p><b>user@site.ru / 123456</b></p>
+
         <?php ActiveForm::end(); ?>
 
 
