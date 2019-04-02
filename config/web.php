@@ -14,7 +14,16 @@ $config = [
         '@bower' => '@vendor/bower-asset',
         '@npm'   => '@vendor/npm-asset',
     ],
+    'modules' => [
+        'auth' => [
+            'class' => 'app\modules\auth\Module',
+        ],
+    ],
     'components' => [
+        'auth' => [
+            'class' => \app\modules\auth\components\AuthComponent::class,
+            'model_class' => \app\modules\auth\models\User::class,
+        ],
         'activity' => [
             'class' => app\components\ActivityComponent::class,
             'model_class' => \app\models\Activity::class
