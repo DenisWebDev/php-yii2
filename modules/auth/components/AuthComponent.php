@@ -11,6 +11,7 @@ namespace app\modules\auth\components;
 
 use app\modules\auth\models\User;
 use yii\base\Component;
+use yii\base\InvalidArgumentException;
 
 class AuthComponent extends Component
 {
@@ -116,7 +117,33 @@ class AuthComponent extends Component
 
     private function checkPassword($password, $password_hash):bool
     {
-        return \Yii::$app->security->validatePassword($password, $password_hash);
+        try {
+            return \Yii::$app->security->validatePassword($password, $password_hash);
+        } catch (InvalidArgumentException $exception) {
+            return false;
+        }
+    }
+
+    /**
+     * @param $email
+     * @param $password
+     * @return int
+     * @throws \yii\base\Exception
+     */
+    public function createDemoUser($email, $password) {
+        $model = $this->getModel()::findOne(['email' => $email]);
+        if ($model) {
+            if (!$this->checkPassword($password, $model->password_hash)) {
+                $model->password = $password;
+                $model->password_hash = $this->generatePasswordHash($password);
+            }
+        } else {
+            $model = $this->getModel();
+            $model->email = $email;
+            $model->password = $password;
+            $this->createUser($model);
+        }
+        return $model->id;
     }
 
 }

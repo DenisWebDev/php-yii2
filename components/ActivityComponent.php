@@ -72,4 +72,5 @@ class ActivityComponent extends Component
         }
         return $model;
     }
+
 }
