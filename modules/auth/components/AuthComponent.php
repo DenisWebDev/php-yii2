@@ -47,6 +47,8 @@ class AuthComponent extends Component
      */
     public function createUser(&$model):bool
     {
+        $model->setRegisterScenario();
+
         if (!$model->validate(['email', 'password'])) {
             return false;
         }
@@ -55,6 +57,38 @@ class AuthComponent extends Component
         $model->auth_key = $this->generateAuthKey();
 
         if (!$model->save()) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * @param $model User
+     * @return bool
+     * @throws \yii\base\Exception
+     */
+    public function authUser(&$model):bool
+    {
+        $model->setAuthScenario();
+
+        if (!$model->validate(['email', 'password'])){
+            return false;
+        }
+
+        $password = $model->password;
+
+        $model = $model::findOne(['email' => $model->email]);
+
+        $model->auth_key = $this->generateAuthKey();
+        $model->save();
+
+        if (!$this->checkPassword($password, $model->password_hash)){
+            $model->addError('password','Неправильный пароль');
+            return false;
+        }
+
+        if (!\Yii::$app->user->login($model, (60*60*24))){
             return false;
         }
 
@@ -78,6 +112,11 @@ class AuthComponent extends Component
     public function generateAuthKey()
     {
         return \Yii::$app->security->generateRandomString();
+    }
+
+    private function checkPassword($password, $password_hash):bool
+    {
+        return \Yii::$app->security->validatePassword($password, $password_hash);
     }
 
 }

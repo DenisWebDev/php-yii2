@@ -15,8 +15,8 @@ class DefaultController extends Controller
      * @return string|\yii\web\Response
      * @throws \yii\base\Exception
      */
-    public function actionSignUp()    {
-
+    public function actionSignUp()
+    {
         $model = $this->authComponent()->getModel();
 
         if (\Yii::$app->request->isPost) {
@@ -33,10 +33,32 @@ class DefaultController extends Controller
     }
 
     /**
+     * @return string|\yii\web\Response
+     * @throws \yii\base\Exception
+     */
+    public function actionSignIn()
+    {
+        $model = $this->authComponent()->getModel();
+
+        if (\Yii::$app->request->isPost) {
+            $model = $this->authComponent()->getModel(\Yii::$app->request->post());
+
+            if ($this->authComponent()->authUser($model)){
+                return $this->redirect(Url::to(['/activity/create']));
+            }
+        }
+
+        return $this->render('signin', [
+            'model' => $model
+        ]);
+    }
+
+    /**
      * Для подсказок в редакторе
      * @return AuthComponent
      */
-    private function authComponent() {
+    private function authComponent()
+    {
         return \Yii::$app->auth;
     }
 }

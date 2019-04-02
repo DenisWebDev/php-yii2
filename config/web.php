@@ -1,5 +1,13 @@
 <?php
 
+use app\components\ActivityComponent;
+use app\components\RbacComponent;
+use app\models\Activity;
+use app\modules\auth\components\AuthComponent;
+use app\modules\auth\models\User;
+use app\modules\auth\Module;
+use yii\rbac\DbManager;
+
 $params = require __DIR__ . '/params.php';
 $db = file_exists(__DIR__ . '/db-local.php')
     ? require __DIR__ . '/db-local.php'
@@ -16,17 +24,23 @@ $config = [
     ],
     'modules' => [
         'auth' => [
-            'class' => 'app\modules\auth\Module',
+            'class' => Module::class,
         ],
     ],
     'components' => [
         'auth' => [
-            'class' => \app\modules\auth\components\AuthComponent::class,
-            'model_class' => \app\modules\auth\models\User::class,
+            'class' => AuthComponent::class,
+            'model_class' => User::class,
+        ],
+        'authManager' => [
+            'class' => DbManager::class,
+        ],
+        'rbac' => [
+            'class' => RbacComponent::class
         ],
         'activity' => [
-            'class' => app\components\ActivityComponent::class,
-            'model_class' => \app\models\Activity::class
+            'class' => ActivityComponent::class,
+            'model_class' => Activity::class
         ],
         'request' => [
             // !!! insert a secret key in the following (if it is empty) - this is required by cookie validation
@@ -36,7 +50,7 @@ $config = [
             'class' => 'yii\caching\FileCache',
         ],
         'user' => [
-            'identityClass' => 'app\models\User',
+            'identityClass' => User::class,
             'enableAutoLogin' => true,
         ],
         'errorHandler' => [
