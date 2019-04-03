@@ -1,8 +1,8 @@
 <?php
 
 $params = require __DIR__ . '/params.php';
-$db = file_exists(__DIR__ . '/db_local.php')
-    ? require __DIR__ . '/db_local.php'
+$db = file_exists(__DIR__ . '/db-local.php')
+    ? require __DIR__ . '/db-local.php'
     : require __DIR__ . '/db.php';
 
 $config = [
@@ -16,9 +16,6 @@ $config = [
         '@tests' => '@app/tests',
     ],
     'components' => [
-        'authManager'=>[
-            'class'=>\yii\rbac\DbManager::class
-        ],
         'cache' => [
             'class' => 'yii\caching\FileCache',
         ],
