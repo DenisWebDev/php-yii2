@@ -41,11 +41,14 @@ class ActivityComponent extends Component
         /** @var Activity $model */
         if ($model->load($post)) {
             $model->images = UploadedFile::getInstances($model, 'images');
+            $model->user_id = \Yii::$app->user->identity->getId();
             if ($model->validate()) {
                 if ($this->loadImages($model)) {
-                    if ($id = $this->getStorage()->add('activity', $model->getDataForStorage())) {
+                    $model->convertFormDateToDb();
+                    if ($id = $this->getStorage()->add($model)) {
                         return $id;
                     }
+                    $model->convertDbDateToForm();
                 }
             }
         }
@@ -67,9 +70,8 @@ class ActivityComponent extends Component
     {
         /** @var Activity $model */
         $model = $this->getModel();
-        if ($data = $this->getStorage()->get('activity', $id)) {
-            $model->loadFromStorageData($data);
-        }
+        $model = $this->getStorage()->get($model, $id);
+        $model->convertDbDateToForm();
         return $model;
     }
 

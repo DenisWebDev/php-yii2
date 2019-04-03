@@ -11,6 +11,7 @@ namespace app\components;
 
 use app\rules\ViewOwnerActivityRule;
 use yii\base\Component;
+use yii\db\Query;
 
 class RbacComponent extends Component
 {
@@ -63,5 +64,35 @@ class RbacComponent extends Component
         $id = \Yii::$app->auth->createDemoUser('user@site.ru', '123456');
         $authManager->assign($user, $id);
 
+    }
+
+    public function getDbData()
+    {
+        $data = [];
+        foreach(['auth_item', 'auth_item_child', 'auth_assignment', 'auth_rule'] as $table) {
+            $data[$table] = (new Query())->select('*')
+                ->from($table)->all();
+        }
+        return $data;
+    }
+
+    public function canCreateActivity():bool
+    {
+        return \Yii::$app->user->can('create_activity');
+    }
+
+    public function canViewActivity($activity):bool
+    {
+        if (\Yii::$app->user->can('editViewAllActivity')) {
+            return true;
+        }
+
+        if (\Yii::$app->user->can('view_activity', [
+            'activity' => $activity
+        ])) {
+            return true;
+        }
+
+        return false;
     }
 }

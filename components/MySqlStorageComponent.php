@@ -10,40 +10,28 @@ namespace app\components;
 
 
 use yii\base\Component;
-use yii\db\Query;
+use yii\db\ActiveRecord;
 
 class MySqlStorageComponent extends Component implements StorageInterface
 {
     /**
-     * @param $table string
-     * @param $data array
+     * @param ActiveRecord $model
      * @return integer
-     * @throws \yii\db\Exception
      */
-    public function add($table, $data)
+    public function add(ActiveRecord $model)
     {
-        \Yii::$app->db->createCommand()
-            ->insert($table, $data)
-            ->execute();
-        return \Yii::$app->db->getLastInsertID();
+        $model->save(false);
+        return $model->id;
     }
 
-    public function get($table, $id)
+    public function get(ActiveRecord $model, $id)
     {
-        $data = (new Query())->select('*')
-            ->from($table)
-            ->where(['id' => $id])
-            ->limit(1)
-            ->one();
-        return $data ? $data : [];
+        return $model::find()->where(['id' => $id])->one();
     }
 
-    public function getList($table, $options = [])
+    public function getList(ActiveRecord $model, $options = [])
     {
-        $data = (new Query())->select('*')
-            ->from($table)
-            ->all();
-        return $data;
+        return $model::find()->all();
     }
 
 }

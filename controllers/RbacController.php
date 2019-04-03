@@ -9,20 +9,15 @@
 namespace app\controllers;
 
 
-use app\base\BaseController;
-use yii\db\Query;
+use yii\web\Controller;
 
-class RbacController extends BaseController
+class RbacController extends Controller
 {
     public function actionInit()
     {
         \Yii::$app->rbac->init();
 
-        $data = [];
-        foreach(['auth_item', 'auth_item_child', 'auth_assignment', 'auth_rule'] as $table) {
-            $data[$table] = (new Query())->select('*')
-                ->from($table)->all();
-        }
+        $data = \Yii::$app->rbac->getDbData();
 
         return $this->render('init', ['data' => $data]);
     }

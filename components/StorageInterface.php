@@ -9,12 +9,14 @@
 namespace app\components;
 
 
+use yii\db\ActiveRecord;
+
 interface StorageInterface
 {
-    public function add($table, $data);
+    public function add(ActiveRecord $model);
 
-    public function get($table, $id);
+    public function get(ActiveRecord $model, $id);
 
-    public function getList($table, $options = []);
+    public function getList(ActiveRecord $model, $options = []);
 
 }

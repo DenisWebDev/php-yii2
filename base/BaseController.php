@@ -9,7 +9,6 @@
 namespace app\base;
 
 
-use yii\helpers\Url;
 use yii\web\Controller;
 use yii\web\HttpException;
 
@@ -34,8 +33,7 @@ class BaseController extends Controller
     public function beforeAction($action)
     {
         if (\Yii::$app->user->isGuest) {
-            \Yii::$app->session->setFlash('error', 'Требуется авторизация');
-            return $this->redirect(Url::to(['/auth/default/sign-in']));
+            throw new HttpException(401,'Требуется авторизация');
         }
         return parent::beforeAction($action);
     }

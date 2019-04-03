@@ -14,11 +14,16 @@ use app\models\Activity;
 use yii\base\Action;
 use yii\bootstrap\ActiveForm;
 use yii\helpers\Url;
+use yii\web\HttpException;
 use yii\web\Response;
 
 class ActivityCreateAction extends Action
 {
     public function run() {
+
+        if (!\Yii::$app->rbac->canCreateActivity()) {
+            throw new HttpException(403,'У вас нет прав создавать события');
+        }
 
         /** @var ActivityComponent $component */
         $component = \Yii::$app->activity;
