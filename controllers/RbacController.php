@@ -15,7 +15,7 @@ class RbacController extends Controller
 {
     public function actionInit()
     {
-        \Yii::$app->rbac->init();
+        \Yii::$app->rbac->initRbac();
 
         $data = \Yii::$app->rbac->getDbData();
 

@@ -23,7 +23,7 @@ class RbacComponent extends Component
     /**
      * @throws \Exception
      */
-    public function init()
+    public function initRbac()
     {
         $authManager = $this->getAuthManager();
 
