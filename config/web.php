@@ -1,8 +1,10 @@
 <?php
 
-use app\components\ActivityComponent;
+use app\components\ActivityDbComponent;
+use app\components\ActivitySessionComponent;
 use app\components\RbacComponent;
 use app\models\Activity;
+use app\models\ActivityRecord;
 use app\modules\auth\components\AuthComponent;
 use app\modules\auth\models\User;
 use app\modules\auth\Module;
@@ -39,8 +41,11 @@ $config = [
             'class' => RbacComponent::class
         ],
         'activity' => [
-            'class' => ActivityComponent::class,
-            'model_class' => Activity::class
+            'class' => ActivityDbComponent::class,
+            'model_class' => Activity::class,
+            'record_model_class' => ActivityRecord::class
+//            'class' => ActivitySessionComponent::class,
+//            'model_class' => Activity::class
         ],
         'request' => [
             // !!! insert a secret key in the following (if it is empty) - this is required by cookie validation

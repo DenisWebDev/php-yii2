@@ -3,7 +3,6 @@
 namespace app\models;
 
 use Yii;
-use app\modules\auth\models\User;
 
 /**
  * This is the model class for table "activity".
@@ -23,7 +22,7 @@ use app\modules\auth\models\User;
  * @property ActivityRepeatType $repeatType
  * @property User $user
  */
-class ActivityBase extends \yii\db\ActiveRecord
+class ActivityRecordBase extends \yii\db\ActiveRecord
 {
     /**
      * {@inheritdoc}

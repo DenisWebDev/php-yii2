@@ -9,15 +9,28 @@
 namespace app\models;
 
 
+use yii\base\Model;
 use yii\helpers\ArrayHelper;
 
-class Activity extends ActivityBase
+class Activity extends Model
 {
-    public $images;
+    public $id;
+    public $user_id;
+    public $title;
+    public $description;
+    public $date_start;
+    public $date_end;
+    public $repeat_type_id;
+    public $is_blocked;
+    public $use_notification;
+    public $email;
+    public $date_add;
+
+    public $images = [];
 
     public function rules()
     {
-        return array_merge([
+        return [
             [['title', 'description', 'email'], 'trim'],
             [['title', 'date_start'], 'required'],
             ['description', 'string', 'max' => 255],
@@ -29,12 +42,12 @@ class Activity extends ActivityBase
                 return $model->use_notification == 1 ? true : false;
             }],
             ['images', 'file', 'mimeTypes' => 'image/*', 'maxFiles' => 10]
-        ], parent::rules());
+        ];
     }
 
     public function attributeLabels()
     {
-        return array_merge(parent::attributeLabels(), [
+        return [
             'title' => 'Название',
             'description' => 'Описание',
             'date_start' => 'Дата начала',
@@ -43,7 +56,7 @@ class Activity extends ActivityBase
             'is_blocked' => 'Блокирующее событие',
             'use_notification' => 'Уведомить о событии',
             'images' => 'Картинки'
-        ]);
+        ];
     }
 
     /**
@@ -73,11 +86,11 @@ class Activity extends ActivityBase
 
     public function convertFormDateToDb() {
         $this->date_start = \DateTime::createFromFormat('d.m.Y', $this->date_start)
-            ->format('Y-m-d');
+            ->format('Y-m-d H:i:s');
 
         if ($this->date_end) {
             $this->date_end = \DateTime::createFromFormat('d.m.Y', $this->date_end)
-                ->format('Y-m-d');
+                ->format('Y-m-d H:i:s');
         }
     }
 

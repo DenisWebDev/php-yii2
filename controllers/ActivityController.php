@@ -24,7 +24,8 @@ class ActivityController extends BaseController
 
     public function actionIndex()
     {
-        return $this->render('index');
+        $data = \Yii::$app->activity->getActivities();
+        return $this->render('index', ['data' => $data]);
     }
 
     public function actionView($id) {
