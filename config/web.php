@@ -1,5 +1,6 @@
 <?php
 
+use app\behaviors\DemoLogBehavior;
 use app\components\ActivityDbComponent;
 use app\components\ActivitySessionComponent;
 use app\components\RbacComponent;
@@ -28,6 +29,9 @@ $config = [
         'auth' => [
             'class' => Module::class,
         ],
+    ],
+    'as demolog' => [
+        'class' => DemoLogBehavior::class
     ],
     'components' => [
         'formatter' => [

@@ -2,6 +2,7 @@
 
 namespace app\models;
 
+use app\behaviors\DemoLogBehavior;
 use app\modules\auth\models\User;
 use yii\helpers\ArrayHelper;
 
@@ -11,6 +12,13 @@ use yii\helpers\ArrayHelper;
 
 class ActivityRecord extends ActivityRecordBase
 {
+    public function behaviors()
+    {
+        return [
+            DemoLogBehavior::class
+        ];
+    }
+
     public function rules()
     {
         $rules = parent::rules();

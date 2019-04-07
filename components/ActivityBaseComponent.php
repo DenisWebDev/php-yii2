@@ -9,12 +9,15 @@
 namespace app\components;
 
 
+use app\behaviors\DemoLogBehavior;
 use app\models\Activity;
 use yii\base\Component;
 use yii\web\UploadedFile;
 
 abstract class ActivityBaseComponent extends Component
 {
+    const EVENT_LOAD_IMAGES = 'loadImages';
+
     public $model_class;
 
     abstract protected function insert($model);
@@ -33,6 +36,13 @@ abstract class ActivityBaseComponent extends Component
         if (!$this->model_class) {
             throw new \Exception('Need model_class param');
         }
+    }
+
+    public function behaviors()
+    {
+        return [
+            DemoLogBehavior::class
+        ];
     }
 
     public function getModel() {
@@ -76,6 +86,7 @@ abstract class ActivityBaseComponent extends Component
         $component = \Yii::createObject(['class' => ImageLoaderComponent::class]);
         foreach ($model->images as &$image) {
             if ($file = $component->saveUploadedImage($image)) {
+                $this->trigger(static::EVENT_LOAD_IMAGES);
                 $image = basename($file);
             }
         }
