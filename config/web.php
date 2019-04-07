@@ -30,6 +30,9 @@ $config = [
         ],
     ],
     'components' => [
+        'formatter' => [
+            'dateFormat' => 'php:d.m.Y'
+        ],
         'auth' => [
             'class' => AuthComponent::class,
             'model_class' => User::class,

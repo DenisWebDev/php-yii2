@@ -14,7 +14,7 @@
  * @var $rand_user_email string
  */
 
-?>
+use app\widgets\daotable\DaoTableWidget; ?>
 <p><a href="<?= \yii\helpers\Url::to(['dao/add']) ?>">Наполнить данными</a></p>
 <?php if ($data): ?>
     <p>
@@ -25,6 +25,7 @@
             Найти все события пользователя ID <?= $rand_user_id ?>
         </a>
     </p>
+
     <p>
         <a href="<?= \yii\helpers\Url::to([
             'dao/index',
@@ -33,20 +34,10 @@
             Найти все события пользователя email <?= $rand_user_email ?>
         </a>
     </p>
+
     <p><a href="<?= \yii\helpers\Url::to(['dao/clear']) ?>">Очистить данные</a></p>
+
     <p>Всего событий: <?= count($data) ?></p>
-    <table class="table table-bordered small">
-        <tr>
-            <?php foreach ($data[0] as $k => $v): ?>
-                <td><?= \yii\bootstrap\Html::encode($k) ?></td>
-            <?php endforeach; ?>
-        </tr>
-        <?php foreach ($data as $v): ?>
-            <tr>
-                <?php foreach ($v as $_v): ?>
-                    <td><?= \yii\bootstrap\Html::encode($_v) ?></td>
-                <?php endforeach; ?>
-            </tr>
-        <?php endforeach; ?>
-    </table>
+
+    <?= DaoTableWidget::widget(['activities' => $data]) ?>
 <?php endif; ?>

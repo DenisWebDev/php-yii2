@@ -5,6 +5,10 @@ namespace app\models;
 use app\modules\auth\models\User;
 use yii\helpers\ArrayHelper;
 
+/**
+ * @property User $user
+ */
+
 class ActivityRecord extends ActivityRecordBase
 {
     public function rules()
@@ -21,6 +25,11 @@ class ActivityRecord extends ActivityRecordBase
             [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::class,
                 'targetAttribute' => ['user_id' => 'id']],
         ]);
+    }
+
+    public function getUser()
+    {
+        return $this->hasOne(User::class, ['id' => 'user_id']);
     }
 
 }
