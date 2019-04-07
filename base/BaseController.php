@@ -10,6 +10,7 @@ namespace app\base;
 
 
 use yii\web\Controller;
+use yii\web\HttpException;
 
 class BaseController extends Controller
 {
@@ -21,6 +22,20 @@ class BaseController extends Controller
         \Yii::$app->session->set('last_page_url', $url);
 
         return $result;
+    }
+
+    /**
+     * @param $action
+     * @return bool|\yii\web\Response
+     * @throws HttpException
+     * @throws \yii\web\BadRequestHttpException
+     */
+    public function beforeAction($action)
+    {
+        if (\Yii::$app->user->isGuest) {
+            throw new HttpException(401,'Требуется авторизация');
+        }
+        return parent::beforeAction($action);
     }
 
 }

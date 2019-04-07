@@ -1,5 +1,15 @@
 <?php
 
+use app\components\ActivityDbComponent;
+use app\components\ActivitySessionComponent;
+use app\components\RbacComponent;
+use app\models\Activity;
+use app\models\ActivityRecord;
+use app\modules\auth\components\AuthComponent;
+use app\modules\auth\models\User;
+use app\modules\auth\Module;
+use yii\rbac\DbManager;
+
 $params = require __DIR__ . '/params.php';
 $db = file_exists(__DIR__ . '/db-local.php')
     ? require __DIR__ . '/db-local.php'
@@ -14,10 +24,28 @@ $config = [
         '@bower' => '@vendor/bower-asset',
         '@npm'   => '@vendor/npm-asset',
     ],
+    'modules' => [
+        'auth' => [
+            'class' => Module::class,
+        ],
+    ],
     'components' => [
+        'auth' => [
+            'class' => AuthComponent::class,
+            'model_class' => User::class,
+        ],
+        'authManager' => [
+            'class' => DbManager::class,
+        ],
+        'rbac' => [
+            'class' => RbacComponent::class
+        ],
         'activity' => [
-            'class' => app\components\ActivityComponent::class,
-            'model_class' => \app\models\Activity::class
+            'class' => ActivityDbComponent::class,
+            'model_class' => Activity::class,
+            'record_model_class' => ActivityRecord::class
+//            'class' => ActivitySessionComponent::class,
+//            'model_class' => Activity::class
         ],
         'request' => [
             // !!! insert a secret key in the following (if it is empty) - this is required by cookie validation
@@ -27,7 +55,7 @@ $config = [
             'class' => 'yii\caching\FileCache',
         ],
         'user' => [
-            'identityClass' => 'app\models\User',
+            'identityClass' => User::class,
             'enableAutoLogin' => true,
         ],
         'errorHandler' => [

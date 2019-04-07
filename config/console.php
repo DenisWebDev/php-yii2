@@ -1,5 +1,7 @@
 <?php
 
+use yii\rbac\DbManager;
+
 $params = require __DIR__ . '/params.php';
 $db = file_exists(__DIR__ . '/db-local.php')
     ? require __DIR__ . '/db-local.php'
@@ -16,6 +18,9 @@ $config = [
         '@tests' => '@app/tests',
     ],
     'components' => [
+        'authManager' => [
+            'class' => DbManager::class,
+        ],
         'cache' => [
             'class' => 'yii\caching\FileCache',
         ],

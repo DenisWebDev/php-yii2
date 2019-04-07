@@ -9,29 +9,24 @@
 namespace app\models;
 
 
-use app\base\BaseModel;
-use yii\db\Query;
+use yii\base\Model;
 use yii\helpers\ArrayHelper;
 
-class Activity extends BaseModel
+class Activity extends Model
 {
+    public $id;
+    public $user_id;
     public $title;
-
     public $description;
-
     public $date_start;
-
     public $date_end;
-
-    public $images;
-
     public $repeat_type_id;
-
     public $is_blocked;
-
     public $use_notification;
-
     public $email;
+    public $date_add;
+
+    public $images = [];
 
     public function rules()
     {
@@ -89,51 +84,35 @@ class Activity extends BaseModel
         }
     }
 
-    public function getDataForStorage() {
-        $data = $this->attributes;
+    public function convertFormDateToDb() {
+        $this->date_start = \DateTime::createFromFormat('d.m.Y', $this->date_start)
+            ->format('Y-m-d H:i:s');
 
-        $data['user_id'] = 1;
-
-        // TODO картинки пока не храним
-        unset($data['images']);
-
-        $data['date_start'] = \DateTime::createFromFormat('d.m.Y', $data['date_start'])
-            ->format('Y-m-d');
-
-        if ($data['date_end']) {
-            $data['date_end'] = \DateTime::createFromFormat('d.m.Y', $data['date_end'])
-                ->format('Y-m-d');
+        if ($this->date_end) {
+            $this->date_end = \DateTime::createFromFormat('d.m.Y', $this->date_end)
+                ->format('Y-m-d H:i:s');
         }
-
-        return $data;
     }
 
-    public function loadFromStorageData($data) {
-        $data['images'] = array();
-
-        $data['date_start'] = \DateTime::createFromFormat('Y-m-d H:i:s', $data['date_start'])
+    public function convertDbDateToForm() {
+        $this->date_start = \DateTime::createFromFormat('Y-m-d H:i:s', $this->date_start)
             ->format('d.m.Y');
 
-        if ($data['date_end']) {
-            $data['date_end'] = \DateTime::createFromFormat('Y-m-d H:i:s', $data['date_end'])
+        if ($this->date_end) {
+            $this->date_end = \DateTime::createFromFormat('Y-m-d H:i:s', $this->date_end)
                 ->format('d.m.Y');
         }
-
-        $this->attributes = $data;
     }
 
     public function getRepeatTypes() {
         static $repeat_types;
         if (!isset($repeat_types)) {
-            $repeat_types = (new Query())->select('*')
-                ->from('activity_repeat_type')->all();
+            $repeat_types = ActivityRepeatType::find()->asArray()->all();
             $repeat_types = ArrayHelper::map($repeat_types, 'id', 'name');
         }
         return $repeat_types;
     }
 
-    public function getRepeatType($id) {
-        $data = $this->getRepeatTypes();
-        return array_key_exists($id, $data) ? $data[$id] : false;
-    }
+
+
 }

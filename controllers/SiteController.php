@@ -4,13 +4,13 @@ namespace app\controllers;
 
 use Yii;
 use yii\filters\AccessControl;
-use app\base\BaseController;
+use yii\web\Controller;
 use yii\web\Response;
 use yii\filters\VerbFilter;
 use app\models\LoginForm;
 use app\models\ContactForm;
 
-class SiteController extends BaseController
+class SiteController extends Controller
 {
     /**
      * {@inheritdoc}

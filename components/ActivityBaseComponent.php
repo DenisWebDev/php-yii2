@@ -2,56 +2,75 @@
 /**
  * Created by PhpStorm.
  * User: User
- * Date: 22.03.2019
- * Time: 23:41
+ * Date: 05.04.2019
+ * Time: 21:52
  */
 
 namespace app\components;
+
 
 use app\models\Activity;
 use yii\base\Component;
 use yii\web\UploadedFile;
 
-class ActivityComponent extends Component
+abstract class ActivityBaseComponent extends Component
 {
     public $model_class;
 
+    abstract protected function insert($model);
+
+    abstract public function getActivity($id);
+
+    abstract public function getActivities($options = []);
+
+    /**
+     * @throws \Exception
+     */
     public function init()
     {
         parent::init();
 
-        if (empty($this->model_class)) {
+        if (!$this->model_class) {
             throw new \Exception('Need model_class param');
         }
     }
 
-    public function getModel()
-    {
-        return new $this->model_class;
+    public function getModel() {
+        /** @var Activity $model */
+        $model = new $this->model_class;
+        return $model;
     }
 
-    private function getStorage()
-    {
-        return \Yii::createObject([
-            'class' => \Yii::$app->params['activityStorageComponent']
-        ]);
-    }
-
-    public function createActivity(&$model, $post) {
+    /**
+     * @param $model
+     * @param $post
+     * @param $user_id
+     * @return bool
+     * @throws \yii\base\InvalidConfigException
+     */
+    public function createActivity(&$model, $post, $user_id) {
         /** @var Activity $model */
         if ($model->load($post)) {
             $model->images = UploadedFile::getInstances($model, 'images');
+            $model->user_id = $user_id;
             if ($model->validate()) {
                 if ($this->loadImages($model)) {
-                    if ($id = $this->getStorage()->add('activity', $model->getDataForStorage())) {
+                    $model->convertFormDateToDb();
+                    if ($id = $this->insert($model)) {
                         return $id;
                     }
+                    $model->convertDbDateToForm();
                 }
             }
         }
         return false;
     }
 
+    /**
+     * @param $model
+     * @return bool
+     * @throws \yii\base\InvalidConfigException
+     */
     private function loadImages($model)
     {
         $component = \Yii::createObject(['class' => ImageLoaderComponent::class]);
@@ -63,13 +82,5 @@ class ActivityComponent extends Component
         return true;
     }
 
-    public function getActivity($id)
-    {
-        /** @var Activity $model */
-        $model = $this->getModel();
-        if ($data = $this->getStorage()->get('activity', $id)) {
-            $model->loadFromStorageData($data);
-        }
-        return $model;
-    }
+
 }
