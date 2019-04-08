@@ -10,7 +10,11 @@ namespace app\controllers;
 
 
 use app\base\BaseController;
+use app\behaviors\DateCreatedBehavior;
+use app\components\ActivityBaseComponent;
 use app\controllers\actions\ActivityCreateAction;
+use app\models\Activity;
+use app\models\ActivitySearch;
 use yii\web\HttpException;
 
 class ActivityController extends BaseController
@@ -24,13 +28,23 @@ class ActivityController extends BaseController
 
     public function actionIndex()
     {
-        $data = \Yii::$app->activity->getActivities();
-        return $this->render('index', ['data' => $data]);
+        $model = new ActivitySearch();
+
+        $provider = $model->getDataProvider(\Yii::$app->request->queryParams);
+
+        return $this->render('index', [
+            'model' => $model,
+            'provider' => $provider
+        ]);
     }
 
     public function actionView($id) {
 
-        $model = \Yii::$app->activity->getActivity($id);
+        /** @var ActivityBaseComponent $component */
+        $component = \Yii::$app->activity;
+
+        /** @var Activity $model */
+        $model = $component->getActivity($id);
 
         if (!$model){
             throw new HttpException(401, 'Событите не найдено');
@@ -39,9 +53,19 @@ class ActivityController extends BaseController
             throw new HttpException(403,'У вас нет прав просмотра данного события');
         }
 
+        $model->attachBehavior('datecreated', [
+            'class' => DateCreatedBehavior::class,
+            'attribute_name' => 'date_add'
+        ]);
+
+//        $model->detachBehavior('datecreated');
+
+        \Yii::$app->demoLog();
+
         return $this->render('view',
             ['model' => $model]
         );
     }
+
 
 }

@@ -2,11 +2,23 @@
 
 namespace app\models;
 
+use app\behaviors\DemoLogBehavior;
 use app\modules\auth\models\User;
 use yii\helpers\ArrayHelper;
 
+/**
+ * @property User $user
+ */
+
 class ActivityRecord extends ActivityRecordBase
 {
+    public function behaviors()
+    {
+        return [
+            DemoLogBehavior::class
+        ];
+    }
+
     public function rules()
     {
         $rules = parent::rules();
@@ -21,6 +33,11 @@ class ActivityRecord extends ActivityRecordBase
             [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::class,
                 'targetAttribute' => ['user_id' => 'id']],
         ]);
+    }
+
+    public function getUser()
+    {
+        return $this->hasOne(User::class, ['id' => 'user_id']);
     }
 
 }

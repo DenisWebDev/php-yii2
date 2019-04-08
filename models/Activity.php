@@ -9,8 +9,14 @@
 namespace app\models;
 
 
+use app\behaviors\DateCreatedBehavior;
+use app\behaviors\DemoLogBehavior;
 use yii\base\Model;
 use yii\helpers\ArrayHelper;
+
+/**
+ * @method getDateCreated
+ */
 
 class Activity extends Model
 {
@@ -27,6 +33,16 @@ class Activity extends Model
     public $date_add;
 
     public $images = [];
+
+//    public function behaviors()
+//    {
+//        return [
+//            [
+//                'class' => DateCreatedBehavior::class,
+//                'attribute_name' => 'date_add'
+//            ],
+//        ];
+//    }
 
     public function rules()
     {
