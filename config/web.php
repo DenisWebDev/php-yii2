@@ -11,21 +11,13 @@ use app\modules\auth\models\User;
 use app\modules\auth\Module;
 use yii\rbac\DbManager;
 
-$params = file_exists(__DIR__ . '/params_local.php')
-    ? require __DIR__ . '/params_local.php'
-    : require __DIR__ . '/params.php';
-
-$db = file_exists(__DIR__ . '/db_local.php')
-    ? require __DIR__ . '/db_local.php'
+$params = require __DIR__ . '/params.php';
+$db = file_exists(__DIR__ . '/db-local.php')
+    ? require __DIR__ . '/db-local.php'
     : require __DIR__ . '/db.php';
-
-$mailer = file_exists(__DIR__ . '/mailer_local.php')
-    ? require __DIR__ . '/mailer_local.php'
-    : require __DIR__ . '/mailer.php';
 
 $config = [
     'id' => 'basic',
-    'timeZone' => 'Europe/Moscow',
     'basePath' => dirname(__DIR__),
     'bootstrap' => ['log'],
     'language' => 'ru-RU',
@@ -76,7 +68,13 @@ $config = [
         'errorHandler' => [
             'errorAction' => 'site/error',
         ],
-        'mailer' => $mailer,
+        'mailer' => [
+            'class' => 'yii\swiftmailer\Mailer',
+            // send all mails to a file by default. You have to set
+            // 'useFileTransport' to false and configure a transport
+            // for the mailer to send real emails.
+            'useFileTransport' => true,
+        ],
         'log' => [
             'traceLevel' => YII_DEBUG ? 3 : 0,
             'targets' => [

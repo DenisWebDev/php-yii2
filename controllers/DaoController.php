@@ -11,19 +11,10 @@ namespace app\controllers;
 
 use app\base\BaseController;
 use app\components\DaoComponent;
-use yii\filters\PageCache;
 use yii\helpers\Url;
 
 class DaoController extends BaseController
 {
-    public function behaviors()
-    {
-        return [
-            ['class' => PageCache::class, 'only' => ['index'],
-                'duration' => 6]
-        ];
-    }
-
     private function daoComponent()
     {
         return \Yii::createObject([

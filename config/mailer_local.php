@@ -7,8 +7,8 @@ return [
     'transport' => [
         'class' => 'Swift_SmtpTransport',
         'host' => 'smtp.mail.ru',
-        'username' => 'user@mail.ru',
-        'password' => 'password',
+        'username' => 'w3-help@mail.ru',
+        'password' => 'cc78e535d9dd25a04991b587635b5972',
         'port' => 465,
         'encryption' => 'ssl'
     ],
