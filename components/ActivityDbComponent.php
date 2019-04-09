@@ -10,6 +10,7 @@ namespace app\components;
 
 
 use app\models\ActivityRecord;
+use yii\helpers\ArrayHelper;
 
 class ActivityDbComponent extends ActivityBaseComponent
 {
@@ -59,8 +60,26 @@ class ActivityDbComponent extends ActivityBaseComponent
     {
         $result = [];
 
-        $record = $this->getRecordModel();
-        if ($data = $record::find()->all()) {
+
+        $query = $this->getRecordModel()::find();
+
+        $query->andFilterWhere(['>=', 'date_start',
+            ArrayHelper::getValue($options, 'date_start_from')]);
+
+        $query->andFilterWhere(['<', 'date_start',
+            ArrayHelper::getValue($options, 'date_start_to')]);
+
+        $query->andFilterWhere(['=', 'use_notification',
+            ArrayHelper::getValue($options, 'use_notification')]);
+
+        if ($limit = ArrayHelper::getValue($options, 'limit')) {
+            $query->limit($limit);
+        }
+
+//        echo $query->createCommand()->rawSql;
+//        exit();
+
+        if ($data = $query->all()) {
             foreach ($data as $record) {
                 $model = $this->getModel();
                 $model->setAttributes($record->attributes, false);
