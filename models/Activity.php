@@ -9,11 +9,22 @@
 namespace app\models;
 
 
+use app\behaviors\DateCreatedBehavior;
+use app\behaviors\LogMyBehavior;
 use yii\helpers\ArrayHelper;
 
 class Activity extends ActivityBase
 {
     public $images;
+
+    public function behaviors()
+    {
+        return [
+            ['class' => DateCreatedBehavior::class,
+                'attribute_name' => 'date_add'],
+            LogMyBehavior::class
+        ];
+    }
 
     public function rules()
     {
@@ -25,7 +36,7 @@ class Activity extends ActivityBase
             ['repeat_type_id', 'in', 'range' => array_keys(static::getRepeatTypes())],
             [['date_start', 'date_end'], 'date', 'format' => 'php:d.m.Y'],
             [['date_start', 'date_end'], 'validateDates'],
-            ['email', 'required', 'when' => function($model) {
+            ['email', 'required', 'when' => function ($model) {
                 return $model->use_notification == 1 ? true : false;
             }],
             ['images', 'file', 'mimeTypes' => 'image/*', 'maxFiles' => 10]
@@ -50,7 +61,8 @@ class Activity extends ActivityBase
      * @param $attribute
      * @throws \Exception
      */
-    public function validateDates($attribute) {
+    public function validateDates($attribute)
+    {
         $date_start = \DateTime::createFromFormat('d.m.Y', $this->date_start);
         $date_start = $date_start ? intval($date_start->format('Ymd')) : 0;
 
@@ -61,17 +73,18 @@ class Activity extends ActivityBase
 
         if ($attribute == 'date_start') {
             if ($date_start && $date_start <= $current_date) {
-                $this->addError('date_start','Дата начала уже прошла');
+                $this->addError('date_start', 'Дата начала уже прошла');
             }
         }
         if ($attribute == 'date_end') {
             if ($date_start && $date_end && $date_end < $date_start) {
-                $this->addError('date_end','Дата окончания не может быть меньше даты начала');
+                $this->addError('date_end', 'Дата окончания не может быть меньше даты начала');
             }
         }
     }
 
-    public function convertFormDateToDb() {
+    public function convertFormDateToDb()
+    {
         $this->date_start = \DateTime::createFromFormat('d.m.Y', $this->date_start)
             ->format('Y-m-d');
 
@@ -81,7 +94,8 @@ class Activity extends ActivityBase
         }
     }
 
-    public function convertDbDateToForm() {
+    public function convertDbDateToForm()
+    {
         $this->date_start = \DateTime::createFromFormat('Y-m-d H:i:s', $this->date_start)
             ->format('d.m.Y');
 
@@ -91,7 +105,8 @@ class Activity extends ActivityBase
         }
     }
 
-    public function getRepeatTypes() {
+    public function getRepeatTypes()
+    {
         static $repeat_types;
         if (!isset($repeat_types)) {
             $repeat_types = ActivityRepeatType::find()->asArray()->all();
@@ -99,7 +114,6 @@ class Activity extends ActivityBase
         }
         return $repeat_types;
     }
-
 
 
 }

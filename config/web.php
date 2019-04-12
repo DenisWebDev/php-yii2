@@ -9,8 +9,8 @@ use app\modules\auth\Module;
 use yii\rbac\DbManager;
 
 $params = require __DIR__ . '/params.php';
-$db = file_exists(__DIR__ . '/db-local.php')
-    ? require __DIR__ . '/db-local.php'
+$db = file_exists(__DIR__ . '/db_local.php')
+    ? require __DIR__ . '/db_local.php'
     : require __DIR__ . '/db.php';
 
 $config = [
@@ -27,7 +27,11 @@ $config = [
             'class' => Module::class,
         ],
     ],
+//    'as datecreated'=>['class'=>\app\behaviors\LogMyBehavior::class],
     'components' => [
+        'formatter'=>[
+            'dateFormat'=>'d.m.Y'
+        ],
         'auth' => [
             'class' => AuthComponent::class,
             'model_class' => User::class,
