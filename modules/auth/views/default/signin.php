@@ -11,7 +11,9 @@
  * @var $this \yii\web\View
  * @var $model User
  */
+\app\modules\auth\asssets\AuthAsset::register($this);
 
+//$this->registerCssFile('');
 use app\modules\auth\models\User;
 use yii\bootstrap\ActiveForm;
 use yii\bootstrap\Html; ?>

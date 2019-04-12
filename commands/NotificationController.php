@@ -4,6 +4,7 @@
 namespace app\commands;
 
 
+use app\base\INotificaztion;
 use app\components\ActivityDbComponent;
 use app\components\NotificationComponent;
 use app\models\Activity;
@@ -46,9 +47,12 @@ class NotificationController extends Controller
         $repository=\Yii::createObject(['class'=>ActivityDbComponent::class,'record_model_class'=>ActivityRecord::class,'model_class'=>Activity::class]);
         $activities=$repository->getActivityForNotification($this->from);
 
-        /** @var NotificationComponent $notififcation */
-        $notififcation=\Yii::createObject(['class'=>NotificationComponent::class,
-            'mailer' => \Yii::$app->mailer]);
+//        /** @var NotificationComponent $notififcation */
+//        $notififcation=\Yii::createObject(['class'=>NotificationComponent::class,
+//            'mailer' => \Yii::$app->mailer]);
+
+        print_r($activities);
+        $notififcation=\Yii::$container->get('notification');
 
         $notififcation->sendNotifications($activities);
 

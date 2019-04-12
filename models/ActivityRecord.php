@@ -40,4 +40,19 @@ class ActivityRecord extends ActivityRecordBase
         return $this->hasOne(User::class, ['id' => 'user_id']);
     }
 
+    public function fields()
+    {
+        return [
+            'id','title','user_id','date_start',
+            'user_email'=>function($model){
+                return $model->user->email;
+            }
+        ];
+    }
+
+    public function extraFields()
+    {
+        return ['email','date_add'];
+    }
+
 }

@@ -33,6 +33,13 @@ $config = [
     'as demolog' => [
         'class' => DemoLogBehavior::class
     ],
+    'container'=>[
+        'singletons'=>[
+            'app\base\INotificaztion'=>['class'=>'\app\components\Notification'],
+            'app\base\ILogger'=>['class'=>\app\components\WebLogger::class]
+        ],
+        'definitions'=>[]
+    ],
     'components' => [
         'formatter' => [
             'dateFormat' => 'php:d.m.Y'
@@ -55,6 +62,9 @@ $config = [
 //            'model_class' => Activity::class
         ],
         'request' => [
+            'parsers' => [
+                'application/json'=>'yii\web\JsonParser'
+            ],
             // !!! insert a secret key in the following (if it is empty) - this is required by cookie validation
             'cookieValidationKey' => 'dFEEoIOf-J3Sxs7K5hLznIpVS6xSh-sk',
         ],
@@ -66,9 +76,21 @@ $config = [
         'user' => [
             'identityClass' => User::class,
             'enableAutoLogin' => true,
+//            'enableSession' => false
         ],
         'errorHandler' => [
             'errorAction' => 'site/error',
+        ],
+        'i18n'=>[
+            'translations' => [
+                'app*'=>[
+                    'class'=>'yii\i18n\PhpMessageSource',
+                    'fileMap' => [
+                        'app'=>'app.php',
+                        'app/event'=>'event.php'
+                    ]
+                ],
+            ],
         ],
         'mailer' => [
             'class' => 'yii\swiftmailer\Mailer',
@@ -97,6 +119,14 @@ $config = [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
+                ['class'=>'yii\rest\UrlRule',
+                    'controller' => 'rest',
+                    'pluralize' => false
+                ],
+                'add'=>'activity/create',
+                'new'=>'activity/create',
+                'events/view/<id:\w+>'=>'activity/view',
+                'events/<action>'=>'activity/<action>',
             ],
         ],
     ],

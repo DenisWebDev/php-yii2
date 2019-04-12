@@ -76,7 +76,7 @@ class User extends UserBase implements IdentityInterface
      */
     public static function findIdentityByAccessToken($token, $type = null)
     {
-        // TODO: Implement findIdentityByAccessToken() method.
+        return static::find()->andWhere(['token'=>$token])->one();
     }
 
     /**

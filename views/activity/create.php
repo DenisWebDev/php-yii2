@@ -18,6 +18,9 @@ use dosamigos\datepicker\DatePicker;
 
 <div class="row">
     <div class="col-md-6">
+        <h2><?=Yii::t('app','Add new activity');?></h2>
+        <p><?=Yii::t('app','Activity for',['user'=>Yii::$app->user->getIdentity()->email])?></p>
+        <p><?=Yii::t('app','Today is',time())?></p>
         <?php $form = \yii\bootstrap\ActiveForm::begin([
             'id' => 'activity-create',
             'method' => 'post'

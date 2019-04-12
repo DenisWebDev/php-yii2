@@ -4,34 +4,37 @@
 namespace app\components;
 
 
-use yii\base\Component;
+use app\base\ILogger;
+use app\base\INotificaztion;
 use yii\console\Application;
 use yii\helpers\Console;
 use yii\mail\MailerInterface;
 
-class NotificationComponent extends Component
+class Notification implements INotificaztion
 {
+
     /** @var MailerInterface */
-    public $mailer;
+    private $mailer;
 
+    private $logger;
 
-    public function sendNotifications($activities){
+    public function __construct(MailerInterface $mailer, ILogger $logger)
+    {
+        $this->mailer=$mailer;
 
+        $this->logger=$logger;
+    }
+
+    public function sendNotifications($activities)
+    {
         foreach ($activities as ['email'=>$email,
                  'title'=>$title,
                  'date_start'=>$date_start,
                  'description'=>$description]){
             if($this->sendMail($email,$title,$date_start,$description)){
-                if(\Yii::$app instanceof Application){
-//                    echo Console::ansiFormat('Успешно отправлено письмо на '.$email,
-//                        Console::FG_GREEN).PHP_EOL;
-                    echo 'success '.$email.PHP_EOL;
-                }
+                $this->logger->log('success '.$email.PHP_EOL);
             }else{
-                if(\Yii::$app instanceof Application) {
-                    echo Console::ansiFormat('Ошибка ' . $email,
-                            Console::FG_RED) . PHP_EOL;
-                }
+                $this->logger->log('ОШибка');
             }
         }
     }
@@ -43,7 +46,7 @@ class NotificationComponent extends Component
      * @param $description
      * @return bool
      */
-    public function sendMail($email,$title,$date_start,$description){
+    private function sendMail($email,$title,$date_start,$description){
         return $this->mailer->compose('notification',[
             'title'=>$title,
             'date_start'=>$date_start,

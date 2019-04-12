@@ -11,6 +11,7 @@
  * @var $model \app\models\Activity
  */
 
-echo $model->getDateCreated();
+echo Yii::t('app','Date created',$model->getDateCreated());
 echo '<br>';
+
 echo \yii\bootstrap\Html::tag('pre', print_r($model->attributes, true));

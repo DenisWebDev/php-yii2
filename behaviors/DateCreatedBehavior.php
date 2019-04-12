@@ -17,10 +17,8 @@ class DateCreatedBehavior extends Behavior
 
     public function getDateCreated()
     {
-        return \Yii::$app->formatter->asDatetime(
-            $this->owner->{$this->attribute_name},
-            'php:d.m.Y H:i:s'
-        );
+        return strtotime(
+            $this->owner->{$this->attribute_name} );
     }
 
 }

@@ -64,7 +64,7 @@ class Activity extends Model
     public function attributeLabels()
     {
         return [
-            'title' => 'Название',
+            'title' => \Yii::t('app','Title'),
             'description' => 'Описание',
             'date_start' => 'Дата начала',
             'date_end' => 'Дата окончания',
