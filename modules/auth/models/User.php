@@ -62,7 +62,7 @@ class User extends UserBase implements IdentityInterface
      */
     public static function findIdentity($id)
     {
-        return static::find()->where(['id' => $id])->one();
+        return static::find()->cache(5)->where(['id' => $id])->one();
     }
 
     /**

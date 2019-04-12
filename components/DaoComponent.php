@@ -12,6 +12,9 @@ namespace app\components;
 use app\models\Activity;
 use Faker\Factory;
 use yii\base\Component;
+use yii\caching\DbDependency;
+use yii\caching\ExpressionDependency;
+use yii\caching\TagDependency;
 use yii\db\Query;
 
 class DaoComponent extends Component
@@ -29,11 +32,12 @@ class DaoComponent extends Component
         if (isset($options['user_id'])) {
             $query->andWhere(['a.user_id' => $options['user_id']]);
         }
+
         if (isset($options['user_email'])) {
             $query->andWhere(['like', 'u.email', $options['user_email']]);
         }
 
-        return $query->all();
+        return $query->cache('7',new DbDependency(['sql' => 'select max(id) from activity']))->all();
     }
 
     public function addRandomData()
@@ -105,10 +109,12 @@ class DaoComponent extends Component
 
     public function getRandActivityUserId()
     {
+//        TagDependency::invalidate(\Yii::$app->cache,'tag1');
         return (new Query())->from('activity')
             ->select('user_id')
             ->orderBy('RAND()')
             ->limit(1)
+            ->cache(10,new TagDependency(['tags' => 'tag1']))
             ->scalar();
     }
 
@@ -119,6 +125,7 @@ class DaoComponent extends Component
             ->select('u.email')
             ->orderBy('RAND()')
             ->limit(1)
+            ->cache(10)
             ->scalar();
     }
 

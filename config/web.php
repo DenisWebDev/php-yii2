@@ -12,8 +12,8 @@ use app\modules\auth\Module;
 use yii\rbac\DbManager;
 
 $params = require __DIR__ . '/params.php';
-$db = file_exists(__DIR__ . '/db-local.php')
-    ? require __DIR__ . '/db-local.php'
+$db = file_exists(__DIR__ . '/db_local.php')
+    ? require __DIR__ . '/db_local.php'
     : require __DIR__ . '/db.php';
 
 $config = [
@@ -59,7 +59,9 @@ $config = [
             'cookieValidationKey' => 'dFEEoIOf-J3Sxs7K5hLznIpVS6xSh-sk',
         ],
         'cache' => [
-            'class' => 'yii\caching\FileCache',
+//            'class' => 'yii\caching\MemCache',
+                'class'=>'yii\caching\FileCache'
+//            'useMemcached' => true
         ],
         'user' => [
             'identityClass' => User::class,
@@ -70,10 +72,16 @@ $config = [
         ],
         'mailer' => [
             'class' => 'yii\swiftmailer\Mailer',
-            // send all mails to a file by default. You have to set
-            // 'useFileTransport' to false and configure a transport
-            // for the mailer to send real emails.
+            'enableSwiftMailerLogging' => true,
             'useFileTransport' => true,
+//            'transport' => [
+//                'class'=>'Swift_SmtpTransport',
+//                'host'=>'smtp.yandex.ru',
+//                'username' => 'geekbrains@onedeveloper.ru',
+//                'password' => '112358njkz_',
+//                'port' => '587',
+//                'encryption' => 'tls'
+//            ]
         ],
         'log' => [
             'traceLevel' => YII_DEBUG ? 3 : 0,

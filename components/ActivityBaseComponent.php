@@ -93,5 +93,8 @@ abstract class ActivityBaseComponent extends Component
         return true;
     }
 
+//    public function getActivityNotififcation($from){
+//
+//    }
 
 }

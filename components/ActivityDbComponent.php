@@ -55,12 +55,26 @@ class ActivityDbComponent extends ActivityBaseComponent
         return null;
     }
 
+    /**
+     * @param $from
+     * @return \app\models\ActivityRepeatType[]|array|\yii\db\ActiveRecord[]
+     */
+    public function getActivityForNotification($from){
+        $record = $this->getRecordModel();
+        return $record::find()->andWhere('date_start>=:from',[':from' => $from])
+            ->andWhere(['use_notification'=>1])
+            ->andWhere('date_start<=:to',
+                [':to'=>date('Y-m-d').' 24:00:00'])
+//            ->createCommand()->rawSql;
+        ->asArray()->all();
+    }
+
     public function getActivities($options = [])
     {
         $result = [];
 
         $record = $this->getRecordModel();
-        if ($data = $record::find()->all()) {
+        if ($data = $record::find()->andWhere($options)->all()) {
             foreach ($data as $record) {
                 $model = $this->getModel();
                 $model->setAttributes($record->attributes, false);

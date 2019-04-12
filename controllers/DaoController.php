@@ -11,10 +11,19 @@ namespace app\controllers;
 
 use app\base\BaseController;
 use app\components\DaoComponent;
+use yii\filters\PageCache;
 use yii\helpers\Url;
 
 class DaoController extends BaseController
 {
+
+    public function behaviors()
+    {
+        return [
+            ['class'=>PageCache::class,'only' => ['index'],'duration' => 6]
+        ];
+    }
+
     private function daoComponent()
     {
         return \Yii::createObject([
@@ -24,8 +33,20 @@ class DaoController extends BaseController
 
     public function actionIndex()
     {
-        $component = $this->daoComponent();
+//        \Yii::$app->cache->set('key1','value1');
 
+//        $val=\Yii::$app->cache->get('key1');
+//
+////        $val=\Yii::$app->cache->getOrSet('key2',function (){
+//////            return 'val2';
+////        });
+//
+////        \Yii::$app->cache->flush();
+//
+//        echo $val;
+//
+//        exit;
+        $component = $this->daoComponent();
         $options = [];
         if ($user_id = \Yii::$app->request->get('user_id')) {
             $options['user_id'] = $user_id;
