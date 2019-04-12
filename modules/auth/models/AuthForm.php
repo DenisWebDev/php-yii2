@@ -21,12 +21,21 @@ class AuthForm extends Model
 
     const SCENARIO_SIGN_IN = 'sign-in';
 
+    /*
+     * С точки зрения безопасности нельзя сообщать о том,
+     * что пользователь с таким-то email не найден.
+     * Используется только для демонстрации фильтра exist
+     */
     public function rules()
     {
         return [
             ['email', 'trim'],
             [['email', 'password'], 'required'],
-
+            ['email', 'unique', 'targetClass' => 'app\modules\auth\models\User',
+                'on' => static::SCENARIO_SIGN_UP],
+            ['email', 'exist', 'targetClass' => 'app\modules\auth\models\User',
+                'on' => static::SCENARIO_SIGN_IN,
+                'message' => \Yii::t('app', 'Пользователь с данным email не зарегистрирован')],
         ];
     }
 

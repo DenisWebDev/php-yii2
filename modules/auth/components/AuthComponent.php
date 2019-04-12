@@ -63,6 +63,21 @@ class AuthComponent extends Component
      */
     public function signIn($model):bool
     {
+        if (!$model->validate()) {
+            return false;
+        }
+        return false;
+    }
+
+    /**
+     * @param AuthForm $model
+     * @return bool
+     */
+    public function createUser($model):bool
+    {
+        if (!$model->validate()) {
+            return false;
+        }
         return false;
     }
 

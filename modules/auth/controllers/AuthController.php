@@ -41,7 +41,27 @@ class AuthController extends Controller
             }
         }
 
-        return $this->render('signin', ['model' => $model]);
+        return $this->render('signIn', ['model' => $model]);
+    }
 
+    /**
+     * @return string|\yii\web\Response
+     * @throws \yii\base\InvalidConfigException
+     */
+    public function actionSignUp()
+    {
+        if (!\Yii::$app->user->isGuest) {
+            return $this->goHome();
+        }
+
+        $model = $this->getComponent()->getSignUpFormModel();
+
+        if ($model->load(\Yii::$app->request->post())) {
+            if ($this->getComponent()->createUser($model)) {
+                return $this->goHome();
+            }
+        }
+
+        return $this->render('signUp', ['model' => $model]);
     }
 }
