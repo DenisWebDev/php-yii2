@@ -1,15 +1,28 @@
 <?php
 
 $params = require __DIR__ . '/params.php';
-$db = require __DIR__ . '/db.php';
+
+$db = file_exists(__DIR__ . '/db_local.php')
+    ? require __DIR__ . '/db_local.php'
+    : require __DIR__ . '/db.php';
 
 $config = [
     'id' => 'basic',
+    'name' => 'Календарь',
     'basePath' => dirname(__DIR__),
+    'timeZone' => 'Europe/Moscow',
+    'language' => 'ru-RU',
     'bootstrap' => ['log'],
+    'defaultRoute' => '/auth/auth/sign-in',
+    'homeUrl' => '/events',
     'aliases' => [
         '@bower' => '@vendor/bower-asset',
         '@npm'   => '@vendor/npm-asset',
+    ],
+    'modules' => [
+        'auth' => [
+            'class' => 'app\modules\auth\Module',
+        ],
     ],
     'components' => [
         'request' => [
@@ -43,14 +56,15 @@ $config = [
             ],
         ],
         'db' => $db,
-        /*
         'urlManager' => [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
+                '/' => '/auth/auth/sign-in',
+                'events' => '/activity/index',
+                'register' => '/auth/auth/sign-up'
             ],
-        ],
-        */
+        ]
     ],
     'params' => $params,
 ];
@@ -61,14 +75,14 @@ if (YII_ENV_DEV) {
     $config['modules']['debug'] = [
         'class' => 'yii\debug\Module',
         // uncomment the following to add your IP if you are not connecting from localhost.
-        //'allowedIPs' => ['127.0.0.1', '::1'],
+        'allowedIPs' => ['*'],
     ];
 
     $config['bootstrap'][] = 'gii';
     $config['modules']['gii'] = [
         'class' => 'yii\gii\Module',
         // uncomment the following to add your IP if you are not connecting from localhost.
-        //'allowedIPs' => ['127.0.0.1', '::1'],
+        'allowedIPs' => ['*'],
     ];
 }
 
