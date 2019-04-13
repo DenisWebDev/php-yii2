@@ -5,6 +5,8 @@ namespace app\modules\auth\controllers;
 use app\modules\auth\components\AuthComponent;
 use app\modules\auth\models\AuthForm;
 use app\modules\auth\models\User;
+use yii\base\UserException;
+use yii\helpers\Url;
 use yii\web\Controller;
 
 class AuthController extends Controller
@@ -26,6 +28,7 @@ class AuthController extends Controller
     /**
      * @return string|\yii\web\Response
      * @throws \yii\base\InvalidConfigException
+     * @throws \yii\base\Exception
      */
     public function actionSignIn()
     {
@@ -36,8 +39,12 @@ class AuthController extends Controller
         $model = $this->getComponent()->getSignInFormModel();
 
         if ($model->load(\Yii::$app->request->post())) {
-            if ($this->getComponent()->signIn($model)) {
-                return $this->goHome();
+            try {
+                if ($this->getComponent()->signIn($model)) {
+                    return $this->goHome();
+                }
+            } catch (UserException $e) {
+                \Yii::$app->session->setFlash('error', $e->getMessage());
             }
         }
 
@@ -47,6 +54,7 @@ class AuthController extends Controller
     /**
      * @return string|\yii\web\Response
      * @throws \yii\base\InvalidConfigException
+     * @throws \yii\base\Exception
      */
     public function actionSignUp()
     {
@@ -57,11 +65,22 @@ class AuthController extends Controller
         $model = $this->getComponent()->getSignUpFormModel();
 
         if ($model->load(\Yii::$app->request->post())) {
-            if ($this->getComponent()->createUser($model)) {
-                return $this->goHome();
+            try {
+                if ($this->getComponent()->createUser($model)) {
+                    return $this->goHome();
+                }
+            } catch (UserException $e) {
+                \Yii::$app->session->setFlash('error', $e->getMessage());
             }
+
         }
 
         return $this->render('signUp', ['model' => $model]);
+    }
+
+    public function actionLogout()
+    {
+        \Yii::$app->user->logout();
+        return $this->redirect(Url::to([\Yii::$app->defaultRoute]));
     }
 }
