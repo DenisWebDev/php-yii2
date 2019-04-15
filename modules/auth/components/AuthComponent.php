@@ -86,6 +86,7 @@ class AuthComponent extends Component
         throw new UserException('Ошибка авторизации');
     }
 
+
     /**
      * @param AuthForm $model
      * @return bool
@@ -98,18 +99,34 @@ class AuthComponent extends Component
             return false;
         }
 
-        $user = $this->getUserModel();
-        $user->email = $model->email;
-        $user->password_hash = $this->generatePasswordHash($model->password);
-        $user->auth_key = $this->generateAuthKey();
-        $user->access_token = $this->generateAccessToken();
-
-        if ($user->save()) {
+        if ($user = $this->addNewUser($model->email, $model->password)) {
+            \Yii::$app->rbac->assignUserRole($user->id);
             \Yii::$app->user->login($user, 60*60*24);
             return true;
         }
 
         throw new UserException('Регистрация временно недоступна');
+    }
+
+    /**
+     * @param $email
+     * @param $password
+     * @return bool|User
+     * @throws \yii\base\Exception
+     */
+    public function addNewUser($email, $password)
+    {
+        $user = $this->getUserModel();
+        $user->email = $email;
+        $user->password_hash = $this->generatePasswordHash($password);
+        $user->auth_key = $this->generateAuthKey();
+        $user->access_token = $this->generateAccessToken();
+        if ($user->save()) {
+            return $user;
+        }
+        _d($user->getErrors());
+        exit();
+        return false;
     }
 
     /**

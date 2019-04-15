@@ -24,7 +24,18 @@ $config = [
             'class' => 'app\modules\auth\Module',
         ],
     ],
+    'container'=>[
+        'singletons'=> [
+            'app\base\IActivityStorage' => ['class' => '\app\components\ActivityDbStorage'],
+        ],
+        'definitions'=>[]
+    ],
     'components' => [
+        'activity' => [
+            'class' => '\app\components\ActivityComponent',
+            'activityModel' => '\app\models\Activity',
+            'activityFormModel' => '\app\models\ActivityForm'
+        ],
         'request' => [
             // !!! insert a secret key in the following (if it is empty) - this is required by cookie validation
             'cookieValidationKey' => 'UEfgMWd-Hg6UCWYDRnhQVaFfEvClD_eB',
@@ -32,9 +43,20 @@ $config = [
         'cache' => [
             'class' => 'yii\caching\FileCache',
         ],
+        'auth' => [
+          'class' => 'app\modules\auth\components\AuthComponent',
+          'authFormModel' => 'app\modules\auth\models\AuthForm',
+          'userModel' => 'app\modules\auth\models\User'
+        ],
         'user' => [
             'identityClass' => 'app\modules\auth\models\User',
             'enableAutoLogin' => true,
+        ],
+        'authManager' => [
+            'class' => 'yii\rbac\DbManager'
+        ],
+        'rbac' => [
+            'class' => 'app\components\RbacComponent'
         ],
         'errorHandler' => [
             'errorAction' => 'site/error',
@@ -61,8 +83,10 @@ $config = [
             'showScriptName' => false,
             'rules' => [
                 '/' => '/auth/auth/sign-in',
-                'events' => '/activity/index',
-                'register' => '/auth/auth/sign-up'
+                'register' => '/auth/auth/sign-up',
+                'add' => 'activity/create',
+                'events' => 'activity',
+                'events/<action>' => 'activity/<action>',
             ],
         ]
     ],

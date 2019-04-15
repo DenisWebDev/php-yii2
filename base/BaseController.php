@@ -3,6 +3,7 @@
 namespace app\base;
 
 use yii\web\Controller;
+use yii\web\HttpException;
 
 /**
  * Created by PhpStorm.
@@ -13,5 +14,19 @@ use yii\web\Controller;
 
 class BaseController extends Controller
 {
+
+    /**
+     * @param $action
+     * @return bool|\yii\web\Response
+     * @throws HttpException
+     * @throws \yii\web\BadRequestHttpException
+     */
+    public function beforeAction($action)
+    {
+        if (\Yii::$app->user->isGuest) {
+            throw new HttpException(401,'Требуется авторизация');
+        }
+        return parent::beforeAction($action);
+    }
 
 }

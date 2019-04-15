@@ -3,8 +3,6 @@
 namespace app\modules\auth\controllers;
 
 use app\modules\auth\components\AuthComponent;
-use app\modules\auth\models\AuthForm;
-use app\modules\auth\models\User;
 use yii\base\UserException;
 use yii\helpers\Url;
 use yii\web\Controller;
@@ -13,16 +11,10 @@ class AuthController extends Controller
 {
     /**
      * @return AuthComponent
-     * @throws \yii\base\InvalidConfigException
      */
     private function getComponent()
     {
-        $component = \Yii::createObject([
-            'class' => AuthComponent::class,
-            'authFormModel' => AuthForm::class,
-            'userModel' => User::class
-        ]);
-        return $component;
+        return \Yii::$app->auth;
     }
 
     /**

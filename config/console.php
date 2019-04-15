@@ -17,6 +17,17 @@ $config = [
         '@tests' => '@app/tests',
     ],
     'components' => [
+        'auth' => [
+            'class' => 'app\modules\auth\components\AuthComponent',
+            'authFormModel' => 'app\modules\auth\models\AuthForm',
+            'userModel' => 'app\modules\auth\models\User'
+        ],
+        'authManager' => [
+            'class' => 'yii\rbac\DbManager'
+        ],
+        'rbac' => [
+            'class' => 'app\components\RbacComponent'
+        ],
         'cache' => [
             'class' => 'yii\caching\FileCache',
         ],

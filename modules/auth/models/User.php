@@ -2,7 +2,6 @@
 
 namespace app\modules\auth\models;
 
-use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\web\IdentityInterface;
 
@@ -27,11 +26,20 @@ class User extends UserBase implements IdentityInterface
         return $behaviors;
     }
 
-    public function rules()
+    public function beforeValidate()
     {
-        return array_merge(parent::rules(), [
-            [['email', 'password_hash', 'auth_key', 'access_token'], 'required'],
-        ]);
+        /*
+         * Т.к. некорректно работает TimestampBehavior
+         * для полей БД без значений по умолчанию
+         */
+
+        if ($this->created_at === null && $this->isNewRecord) {
+            $this->created_at = time();
+        }
+        if ($this->updated_at === null) {
+            $this->updated_at = time();
+        }
+        return parent::beforeValidate();
     }
 
     public function getUsername()

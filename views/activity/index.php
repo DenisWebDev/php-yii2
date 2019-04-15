@@ -1,11 +1,15 @@
 <?php
 
-/**
- * Created by PhpStorm.
- * User: User
- * Date: 11.04.2019
- * Time: 23:55
+/*
+ * @var $this \yii\web\View
  */
 
-/* @var $this \yii\web\View */
-echo $this->context->getViewPath();
+use yii\helpers\Html;
+use yii\helpers\Url;
+
+?>
+<p>
+    <a href="<?= Html::encode(Url::to(['/activity/create'])) ?>" class="btn btn-primary">
+        <?= Yii::t('app', 'Добавить событие') ?>
+    </a>
+</p>
