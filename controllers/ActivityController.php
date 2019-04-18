@@ -11,23 +11,34 @@ namespace app\controllers;
 
 use app\base\BaseController;
 use app\components\ActivityComponent;
-use app\models\Activity;
-use app\modules\auth\models\User;
+use app\models\ActivityForm;
+use app\models\ActivitySearch;
 use yii\base\UserException;
 use yii\bootstrap\ActiveForm;
 use yii\helpers\Url;
 use yii\web\HttpException;
 use yii\web\Response;
+use yii\web\UploadedFile;
 
 class ActivityController extends BaseController
 {
     public function actionIndex()
     {
-        return $this->render('index');
+        $model = new ActivitySearch();
+        $provider = $model->getDataProvider(\Yii::$app->request->queryParams);
+
+        return $this->render('index', [
+            'model' => $model,
+            'provider' => $provider]
+        );
+
     }
 
     /**
+     * @return array|string|Response
      * @throws HttpException
+     * @throws \yii\base\Exception
+     * @throws \yii\base\InvalidConfigException
      */
     public function actionCreate()
     {
@@ -37,7 +48,7 @@ class ActivityController extends BaseController
 
         $component = $this->getComponent();
 
-        /** @var Activity $model */
+        /** @var ActivityForm $model */
         $model = $component->getActivityFormModel();
         $model->user_id = \Yii::$app->user->getId();
 
@@ -47,6 +58,7 @@ class ActivityController extends BaseController
         }
 
         if ($model->load(\Yii::$app->request->post())) {
+            $model->images = UploadedFile::getInstances($model, 'images');
             try {
                 if ($id = $component->createActivity($model)) {
                     \Yii::$app->session->setFlash('success', 'Событие успешно добавлено');
@@ -56,7 +68,6 @@ class ActivityController extends BaseController
                 \Yii::$app->session->setFlash('error', $e->getMessage());
             }
         }
-
 
         return $this->render('create', [
             'model' => $model,

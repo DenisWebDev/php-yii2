@@ -7,6 +7,7 @@ use yii\helpers\ArrayHelper;
 
 class ActivityForm extends Model
 {
+    public $id;
     public $user_id;
     public $title;
     public $description;
@@ -20,7 +21,7 @@ class ActivityForm extends Model
     public function rules()
     {
         return [
-            [['title', 'description', 'email'], 'trim'],
+            [['title', 'description'], 'trim'],
             [['title', 'date_start'], 'required'],
             ['description', 'string', 'max' => 255],
             [['is_blocked', 'use_notification'], 'boolean'],

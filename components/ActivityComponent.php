@@ -10,9 +10,9 @@ namespace app\components;
 
 
 use app\base\IActivityStorage;
-use app\models\Activity;
 use app\models\ActivityForm;
 use yii\base\Component;
+use yii\base\UserException;
 
 class ActivityComponent extends Component
 {
@@ -28,35 +28,52 @@ class ActivityComponent extends Component
         parent::__construct($config);
     }
 
-    /**
-     * @throws \Exception
-     */
-    public function init()
-    {
-        parent::init();
-
-        if (!$this->activityModel) {
-            throw new \Exception('Need activityModel param');
-        }
-
-        if (!$this->activityFormModel) {
-            throw new \Exception('Need activityFormModel param');
-        }
-    }
-
-    public function getActivityModel() {
-        /** @var Activity $model */
-        $model = new $this->activityModel();
-        return $model;
-    }
-
     public function getActivityFormModel() {
-        /** @var ActivityForm $model */
-        $model = new $this->activityFormModel();
-        return $model;
+        return new ActivityForm();
     }
 
+
+    /**
+     * @param ActivityForm $model
+     * @return bool
+     * @throws UserException
+     * @throws \yii\base\InvalidConfigException
+     * @throws \yii\base\Exception
+     */
     public function createActivity($model) {
+        if (!$model->validate() or !$this->loadImages($model)) {
+            return false;
+        }
+
+        if ($id = $this->storage->save($model)) {
+            return $id;
+        }
+
+        throw new UserException('Не удалось сохранить событие');
+    }
+
+    /**
+     * @param $model ActivityForm
+     * @return bool
+     * @throws \yii\base\InvalidConfigException
+     * @throws \yii\base\Exception
+     */
+    private function loadImages($model)
+    {
+        $component = \Yii::createObject([
+            'class' => ImageLoaderComponent::class
+        ]);
+
+        foreach ($model->images as &$image) {
+            if ($file = $component->saveUploadedImage($image)) {
+                $image = basename($file);
+                continue;
+            }
+            $model->addError('images', 'Не удалось сохранить картинку '.$image->name);
+            return false;
+        }
+
+        return true;
 
     }
 

@@ -32,9 +32,7 @@ $config = [
     ],
     'components' => [
         'activity' => [
-            'class' => '\app\components\ActivityComponent',
-            'activityModel' => '\app\models\Activity',
-            'activityFormModel' => '\app\models\ActivityForm'
+            'class' => '\app\components\ActivityComponent'
         ],
         'request' => [
             // !!! insert a secret key in the following (if it is empty) - this is required by cookie validation

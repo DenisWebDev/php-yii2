@@ -124,8 +124,6 @@ class AuthComponent extends Component
         if ($user->save()) {
             return $user;
         }
-        _d($user->getErrors());
-        exit();
         return false;
     }
 
