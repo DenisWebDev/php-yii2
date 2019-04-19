@@ -83,6 +83,7 @@ $config = [
                 '/' => '/auth/auth/sign-in',
                 'register' => '/auth/auth/sign-up',
                 'add' => 'activity/create',
+                'update/<id:\w+>' => 'activity/update',
                 'events' => 'activity',
                 'events/<action>' => 'activity/<action>',
             ],

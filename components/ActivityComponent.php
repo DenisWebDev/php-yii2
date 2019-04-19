@@ -28,8 +28,18 @@ class ActivityComponent extends Component
         parent::__construct($config);
     }
 
-    public function getActivityFormModel() {
-        return new ActivityForm();
+    /**
+     * @param null|integer $id
+     * @return bool|ActivityForm
+     */
+    public function getActivityFormModel($id = null) {
+        if ($id === null) {
+           return new ActivityForm();
+        }
+        if ($form = $this->storage->loadForm($id)) {
+            return $form;
+        }
+        return false;
     }
 
 

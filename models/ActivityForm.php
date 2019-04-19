@@ -18,6 +18,15 @@ class ActivityForm extends Model
     public $use_notification;
     public $images = [];
 
+    public $commonFields = [
+        'user_id',
+        'title',
+        'description',
+        'repeat_type_id',
+        'is_blocked',
+        'use_notification'
+    ];
+
     public function rules()
     {
         return [

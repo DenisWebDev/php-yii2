@@ -9,9 +9,14 @@
 namespace app\base;
 
 
+use app\models\Activity;
 use app\models\ActivityForm;
 
 interface IActivityStorage
 {
     public function save(ActivityForm $model);
+
+    public function find($id);
+
+    public function loadForm($id);
 }

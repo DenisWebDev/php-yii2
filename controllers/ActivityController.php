@@ -17,6 +17,7 @@ use yii\base\UserException;
 use yii\bootstrap\ActiveForm;
 use yii\helpers\Url;
 use yii\web\HttpException;
+use yii\web\NotFoundHttpException;
 use yii\web\Response;
 use yii\web\UploadedFile;
 
@@ -70,6 +71,33 @@ class ActivityController extends BaseController
         }
 
         return $this->render('create', [
+            'model' => $model,
+        ]);
+    }
+
+    /**
+     * @param $id
+     * @throws HttpException
+     * @throws NotFoundHttpException
+     */
+    public function actionUpdate($id)
+    {
+        if (!\Yii::$app->rbac->canCreateActivity()) {
+            throw new HttpException(403, 'У вас нет прав создавать события');
+        }
+
+        $component = $this->getComponent();
+
+        $model = $component->getActivityFormModel($id);
+
+        if (!$model) {
+            throw new NotFoundHttpException('Событие не найдено');
+        }
+        if (!\Yii::$app->rbac->canViewActivity($model)){
+            throw new HttpException(403, 'У вас нет прав просмотра данного события');
+        }
+
+        return $this->render('update', [
             'model' => $model,
         ]);
     }
