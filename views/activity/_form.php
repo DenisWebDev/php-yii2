@@ -36,6 +36,16 @@ use dosamigos\datepicker\DatePicker;
                 'format' => 'dd.mm.yyyy'
             ]
         ]) ?>
+        <?php foreach ($model->images as $image): ?>
+            <?php if (is_string($image)): ?>
+                <span>
+                    <input type="hidden" name="ActivityForm[savedImages][]" value="<?php echo $image; ?>">
+                    <img onclick="$(this).parent().remove();" src="/images/<?php echo $image; ?>" alt="" class="img-thumbnail" style="height: 100px; margin: 5px 0; cursor: pointer;">
+                </span>
+            <?php endif; ?>
+        <?php endforeach; ?>
+
+
         <?= $form->field($model, 'images[]')->fileInput(['multiple' => true, 'accept' =>'image/*']) ?>
         <?= $form->field($model, 'repeat_type_id')->dropDownList($model->getRepeatTypes()) ?>
         <?= $form->field($model, 'is_blocked')->checkbox() ?>

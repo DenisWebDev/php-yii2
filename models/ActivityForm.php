@@ -17,6 +17,7 @@ class ActivityForm extends Model
     public $is_blocked;
     public $use_notification;
     public $images = [];
+    public $savedImages = [];
 
     public $commonFields = [
         'user_id',
@@ -37,7 +38,8 @@ class ActivityForm extends Model
             ['repeat_type_id', 'in', 'range' => array_keys(static::getRepeatTypes())],
             [['date_start', 'date_end'], 'date', 'format' => 'php:d.m.Y'],
             [['date_start', 'date_end'], 'validateDates'],
-            ['images', 'file', 'mimeTypes' => 'image/*', 'maxFiles' => 10]
+            ['images', 'file', 'mimeTypes' => 'image/*', 'maxFiles' => 10],
+            ['savedImages', 'safe']
         ];
     }
 

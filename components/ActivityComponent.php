@@ -13,6 +13,7 @@ use app\base\IActivityStorage;
 use app\models\ActivityForm;
 use yii\base\Component;
 use yii\base\UserException;
+use yii\helpers\FileHelper;
 
 class ActivityComponent extends Component
 {
@@ -50,7 +51,7 @@ class ActivityComponent extends Component
      * @throws \yii\base\InvalidConfigException
      * @throws \yii\base\Exception
      */
-    public function createActivity($model) {
+    public function saveActivity($model) {
         if (!$model->validate() or !$this->loadImages($model)) {
             return false;
         }
@@ -74,17 +75,28 @@ class ActivityComponent extends Component
             'class' => ImageLoaderComponent::class
         ]);
 
-        foreach ($model->images as &$image) {
+        foreach ($model->images as $k => $image) {
             if ($file = $component->saveUploadedImage($image)) {
-                $image = basename($file);
+                $model->images[$k] = basename($file);
                 continue;
             }
             $model->addError('images', 'Не удалось сохранить картинку '.$image->name);
             return false;
         }
 
+        foreach ($model->savedImages as $image) {
+            if (is_file(\Yii::getAlias('@webroot/images/'.$image))) {
+                $model->images[] = $image;
+            }
+        }
+
         return true;
 
+    }
+
+    public function find($id)
+    {
+        return $this->storage->find($id);
     }
 
 

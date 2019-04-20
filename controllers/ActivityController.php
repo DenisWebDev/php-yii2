@@ -15,6 +15,7 @@ use app\models\ActivityForm;
 use app\models\ActivitySearch;
 use yii\base\UserException;
 use yii\bootstrap\ActiveForm;
+use yii\bootstrap\Html;
 use yii\helpers\Url;
 use yii\web\HttpException;
 use yii\web\NotFoundHttpException;
@@ -28,10 +29,38 @@ class ActivityController extends BaseController
         $model = new ActivitySearch();
         $provider = $model->getDataProvider(\Yii::$app->request->queryParams);
 
+        $columns = [
+            'id',
+            [
+                'attribute' => 'title',
+                'value' => function($model) {
+                    return Html::a(Html::encode($model->title),
+                        ['activity/update', 'id' => $model->id]
+                    );
+                },
+                'format' => 'html'
+            ],
+            [
+                'attribute' => 'dates',
+                'value' => function($model) {
+                    ob_start();
+                    echo \DateTime::createFromFormat('Y-m-d H:i:s', $model->date_start)
+                        ->format('d.m.Y');
+                    if ($model->date_end) {
+                        echo '-'.\DateTime::createFromFormat('Y-m-d H:i:s', $model->date_end)
+                                ->format('d.m.Y');
+                    }
+                    return ob_get_clean();
+                },
+                'format' => 'html'
+            ]
+        ];
+
         return $this->render('index', [
             'model' => $model,
-            'provider' => $provider]
-        );
+            'provider' => $provider,
+            'columns' => $columns
+        ]);
 
     }
 
@@ -61,9 +90,9 @@ class ActivityController extends BaseController
         if ($model->load(\Yii::$app->request->post())) {
             $model->images = UploadedFile::getInstances($model, 'images');
             try {
-                if ($id = $component->createActivity($model)) {
+                if ($id = $component->saveActivity($model)) {
                     \Yii::$app->session->setFlash('success', 'Событие успешно добавлено');
-                    return $this->redirect(Url::to(['activity/view', 'id' => $id]));
+                    return $this->redirect(Url::to(['/activity']));
                 }
             } catch (UserException $e) {
                 \Yii::$app->session->setFlash('error', $e->getMessage());
@@ -77,8 +106,11 @@ class ActivityController extends BaseController
 
     /**
      * @param $id
+     * @return array|string|Response
      * @throws HttpException
      * @throws NotFoundHttpException
+     * @throws \yii\base\Exception
+     * @throws \yii\base\InvalidConfigException
      */
     public function actionUpdate($id)
     {
@@ -94,7 +126,24 @@ class ActivityController extends BaseController
             throw new NotFoundHttpException('Событие не найдено');
         }
         if (!\Yii::$app->rbac->canViewActivity($model)){
-            throw new HttpException(403, 'У вас нет прав просмотра данного события');
+            throw new HttpException(403, 'У вас нет прав редактирования данного события');
+        }
+
+        if (\Yii::$app->request->isAjax && $model->load(\Yii::$app->request->post())) {
+            \Yii::$app->response->format = Response::FORMAT_JSON;
+            return ActiveForm::validate($model);
+        }
+
+        if ($model->load(\Yii::$app->request->post())) {
+            $model->images = UploadedFile::getInstances($model, 'images');
+            try {
+                if ($id = $component->saveActivity($model)) {
+                    \Yii::$app->session->setFlash('success', 'Событие успешно обновлено');
+                    return $this->redirect(Url::to(['/activity']));
+                }
+            } catch (UserException $e) {
+                \Yii::$app->session->setFlash('error', $e->getMessage());
+            }
         }
 
         return $this->render('update', [

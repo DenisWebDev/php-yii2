@@ -1,4 +1,8 @@
-Установка:
+Installation
+
+~~~
+/config/db_local.php
+~~~
 
 ~~~
 composer install
