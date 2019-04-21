@@ -15,7 +15,7 @@ $mailer = file_exists(__DIR__ . '/mailer_local.php')
 $config = [
     'id' => 'basic-console',
     'basePath' => dirname(__DIR__),
-    'bootstrap' => ['log'],
+    'bootstrap' => ['log', '\app\config\PreConf'],
     'controllerNamespace' => 'app\commands',
     'aliases' => [
         '@bower' => '@vendor/bower-asset',
@@ -25,6 +25,9 @@ $config = [
     'container'=>[
         'singletons'=> [
             'app\base\IActivityStorage' => ['class' => '\app\components\ActivityDbStorage'],
+            'app\base\INotification' => ['class' => '\app\components\NotificationComponent'],
+            'notification'=> ['class'=>'app\base\INotification'],
+            'app\base\ILogger' => ['class' => '\app\components\ConsoleLogger'],
         ],
         'definitions'=>[]
     ],

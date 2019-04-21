@@ -53,10 +53,7 @@ class NotificationController extends Controller
         ]);
 
         /** @var NotificationComponent $notification */
-        $notification = \Yii::createObject([
-            'class' => NotificationComponent::class,
-            'mailer' => \Yii::$app->mailer
-        ]);
+        $notification = \Yii::$container->get('notification');
 
         $notification->sendNotifications($activities);
 

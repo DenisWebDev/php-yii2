@@ -3,16 +3,28 @@
 namespace app\components;
 
 
+use app\base\ILogger;
+use app\base\INotification;
 use yii\base\Component;
 use yii\console\Application;
-use yii\helpers\Console;
 use yii\mail\MailerInterface;
 
-class NotificationComponent extends Component
+class NotificationComponent extends Component implements INotification
 {
-    /** @var MailerInterface */
-    public $mailer;
+    private $mailer;
+
+    private $logger;
+
     private $sendError;
+
+    public function __construct(MailerInterface $mailer, ILogger $logger, $config = [])
+    {
+        $this->mailer = $mailer;
+
+        $this->logger = $logger;
+
+        parent::__construct($config);
+    }
 
     public function sendNotifications($activities)    {
 
@@ -24,16 +36,13 @@ class NotificationComponent extends Component
                 $activity->description)
             ) {
                 if (\Yii::$app instanceof Application) {
-                    echo Console::ansiFormat('Успешно отправлено письмо на '.$activity->user->email,
-                            [Console::FG_GREEN]).PHP_EOL;
+                    $this->logger->success('Успешно отправлено письмо на '.$activity->user->email);
                 }
             } else {
                 if (\Yii::$app instanceof Application) {
-                    echo Console::ansiFormat('Ошибка отправки на '.$activity->user->email,
-                            [Console::FG_RED]).PHP_EOL;
+                    $this->logger->error('Ошибка отправки на '.$activity->user->email);
                     if (YII_DEBUG) {
-                        echo Console::ansiFormat($this->sendError,
-                                [Console::FG_RED]).PHP_EOL;
+                        $this->logger->error($this->sendError);
                     }
                 }
             }
@@ -66,6 +75,7 @@ class NotificationComponent extends Component
                 ->send();
         } catch (\Swift_SwiftException $e) {
             $this->sendError = $e->getMessage();
+            return false;
         }
 
     }
