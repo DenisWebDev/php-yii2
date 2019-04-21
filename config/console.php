@@ -1,10 +1,16 @@
 <?php
 
-$params = require __DIR__ . '/params.php';
+$params = file_exists(__DIR__ . '/params_local.php')
+    ? require __DIR__ . '/params_local.php'
+    : require __DIR__ . '/params.php';
 
 $db = file_exists(__DIR__ . '/db_local.php')
     ? require __DIR__ . '/db_local.php'
     : require __DIR__ . '/db.php';
+
+$mailer = file_exists(__DIR__ . '/mailer_local.php')
+    ? require __DIR__ . '/mailer_local.php'
+    : require __DIR__ . '/mailer.php';
 
 $config = [
     'id' => 'basic-console',
@@ -16,7 +22,16 @@ $config = [
         '@npm'   => '@vendor/npm-asset',
         '@tests' => '@app/tests',
     ],
+    'container'=>[
+        'singletons'=> [
+            'app\base\IActivityStorage' => ['class' => '\app\components\ActivityDbStorage'],
+        ],
+        'definitions'=>[]
+    ],
     'components' => [
+        'activity' => [
+            'class' => '\app\components\ActivityComponent'
+        ],
         'auth' => [
             'class' => 'app\modules\auth\components\AuthComponent',
             'authFormModel' => 'app\modules\auth\models\AuthForm',
@@ -40,6 +55,7 @@ $config = [
             ],
         ],
         'db' => $db,
+        'mailer' => $mailer,
     ],
     'params' => $params,
     /*

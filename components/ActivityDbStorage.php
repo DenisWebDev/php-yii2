@@ -14,6 +14,7 @@ use app\models\Activity;
 use app\models\ActivityForm;
 use app\models\ActivityImage;
 use yii\base\Component;
+use yii\helpers\ArrayHelper;
 
 class ActivityDbStorage extends Component implements IActivityStorage
 {
@@ -36,10 +37,10 @@ class ActivityDbStorage extends Component implements IActivityStorage
         $activity->setAttributes($model->getAttributes($model->commonFields), false);
 
         $activity->date_start = \DateTime::createFromFormat('d.m.Y', $model->date_start)
-            ->format('Y-m-d H:i:s');
+            ->format('Y-m-d 0:0:0');
         if ($model->date_end) {
             $activity->date_end = \DateTime::createFromFormat('d.m.Y', $model->date_end)
-                ->format('Y-m-d H:i:s');
+                ->format('Y-m-d 23:59:59');
         }
 
         $transaction = \Yii::$app->db->beginTransaction();
@@ -106,5 +107,37 @@ class ActivityDbStorage extends Component implements IActivityStorage
         }
 
         return false;
+    }
+
+    public function getActivities($options = [])
+    {
+        $query = (new Activity())::find();
+
+        $query->leftJoin('user', 'user.id = activity.user_id');
+
+        $query->andFilterWhere(['=', 'user.email',
+            ArrayHelper::getValue($options, 'email')]);
+
+        $query->andFilterWhere(['>=', 'date_start',
+            ArrayHelper::getValue($options, 'date_start_from')]);
+
+        $query->andFilterWhere(['<', 'date_start',
+            ArrayHelper::getValue($options, 'date_start_to')]);
+
+        $query->andFilterWhere(['=', 'use_notification',
+            ArrayHelper::getValue($options, 'use_notification')]);
+
+        $query->with('user');
+
+        if ($limit = ArrayHelper::getValue($options, 'limit')) {
+            $query->limit($limit);
+        }
+//        echo $query->createCommand()->rawSql;
+//        exit();
+
+        $data = $query->all();
+
+
+        return $data ? $data : [];
     }
 }

@@ -15,7 +15,6 @@ use app\models\ActivityForm;
 use app\models\ActivitySearch;
 use yii\base\UserException;
 use yii\bootstrap\ActiveForm;
-use yii\bootstrap\Html;
 use yii\helpers\Url;
 use yii\web\HttpException;
 use yii\web\NotFoundHttpException;
@@ -27,39 +26,12 @@ class ActivityController extends BaseController
     public function actionIndex()
     {
         $model = new ActivitySearch();
+        $model->showUser = \Yii::$app->rbac->editViewAllActivity();
         $provider = $model->getDataProvider(\Yii::$app->request->queryParams);
-
-        $columns = [
-            'id',
-            [
-                'attribute' => 'title',
-                'value' => function($model) {
-                    return Html::a(Html::encode($model->title),
-                        ['activity/update', 'id' => $model->id]
-                    );
-                },
-                'format' => 'html'
-            ],
-            [
-                'attribute' => 'dates',
-                'value' => function($model) {
-                    ob_start();
-                    echo \DateTime::createFromFormat('Y-m-d H:i:s', $model->date_start)
-                        ->format('d.m.Y');
-                    if ($model->date_end) {
-                        echo '-'.\DateTime::createFromFormat('Y-m-d H:i:s', $model->date_end)
-                                ->format('d.m.Y');
-                    }
-                    return ob_get_clean();
-                },
-                'format' => 'html'
-            ]
-        ];
 
         return $this->render('index', [
             'model' => $model,
-            'provider' => $provider,
-            'columns' => $columns
+            'provider' => $provider
         ]);
 
     }

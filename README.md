@@ -19,3 +19,8 @@ php yii rbac/init
 ~~~
 php yii migrate
 ~~~
+
+Send notifications
+~~~
+php yii notification/send [-d={Y-m-d}] [-l={limit}] [-e={email}]
+~~~

@@ -99,6 +99,11 @@ class ActivityComponent extends Component
         return $this->storage->find($id);
     }
 
+    public function getActivities($options = [])
+    {
+        return $this->storage->getActivities($options);
+    }
+
 
 
 }

@@ -19,4 +19,6 @@ interface IActivityStorage
     public function find($id);
 
     public function loadForm($id);
+
+    public function getActivities($options = []);
 }

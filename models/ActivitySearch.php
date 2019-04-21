@@ -13,6 +13,8 @@ use yii\data\ActiveDataProvider;
 
 class ActivitySearch extends Activity
 {
+    public $showUser = false;
+
     public function getDataProvider($params)
     {
 
@@ -20,11 +22,19 @@ class ActivitySearch extends Activity
 
         $query = $model::find();
 
-        $this->load($params);
+        $this->load($params, 'ActivitySearch');
 
         $provider = new ActiveDataProvider([
             'query' => $query
         ]);
+
+        $query->andFilterWhere(['like', 'title', $this->title]);
+
+        if ($this->showUser) {
+            $query->with('user');
+        } else {
+            $query->andWhere(['user_id' => \Yii::$app->user->id]);
+        }
 
         return $provider;
 

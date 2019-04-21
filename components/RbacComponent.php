@@ -101,4 +101,9 @@ class RbacComponent extends Component
 
         return false;
     }
+
+    public function editViewAllActivity():bool
+    {
+        return \Yii::$app->user->can('editViewAllActivity');
+    }
 }
