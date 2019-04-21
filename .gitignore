@@ -32,4 +32,6 @@ tests/_support/_generated
 #vagrant folder
 /.vagrant
 
-/config/db-local.php
+/config/db_local.php
+/config/mailer_local.php
+/config/params_local.php

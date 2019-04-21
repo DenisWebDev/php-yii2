@@ -1,14 +1,25 @@
 <?php
 
+use app\components\ActivityDbComponent;
+use app\models\Activity;
+use app\models\ActivityRecord;
 use yii\rbac\DbManager;
 
-$params = require __DIR__ . '/params.php';
-$db = file_exists(__DIR__ . '/db-local.php')
-    ? require __DIR__ . '/db-local.php'
+$params = file_exists(__DIR__ . '/params_local.php')
+    ? require __DIR__ . '/params_local.php'
+    : require __DIR__ . '/params.php';
+
+$db = file_exists(__DIR__ . '/db_local.php')
+    ? require __DIR__ . '/db_local.php'
     : require __DIR__ . '/db.php';
+
+$mailer = file_exists(__DIR__ . '/mailer_local.php')
+    ? require __DIR__ . '/mailer_local.php'
+    : require __DIR__ . '/mailer.php';
 
 $config = [
     'id' => 'basic-console',
+    'timeZone' => 'Europe/Moscow',
     'basePath' => dirname(__DIR__),
     'bootstrap' => ['log'],
     'controllerNamespace' => 'app\commands',
@@ -18,6 +29,13 @@ $config = [
         '@tests' => '@app/tests',
     ],
     'components' => [
+        'activity' => [
+            'class' => ActivityDbComponent::class,
+            'model_class' => Activity::class,
+            'record_model_class' => ActivityRecord::class
+//            'class' => ActivitySessionComponent::class,
+//            'model_class' => Activity::class
+        ],
         'authManager' => [
             'class' => DbManager::class,
         ],
@@ -32,6 +50,7 @@ $config = [
                 ],
             ],
         ],
+        'mailer' => $mailer,
         'db' => $db,
     ],
     'params' => $params,

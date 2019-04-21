@@ -39,5 +39,10 @@ use app\widgets\daotable\DaoTableWidget; ?>
 
     <p>Всего событий: <?= count($data) ?></p>
 
-    <?= DaoTableWidget::widget(['activities' => $data]) ?>
+    <?php if ($this->beginCache('DaoTableWidget_'.\Yii::$app->request->url, [
+            'duration' => 10
+    ])): ?>
+        <?= DaoTableWidget::widget(['activities' => $data]) ?>
+    <?php $this->endCache(); ?>
+    <?php endif; ?>
 <?php endif; ?>
