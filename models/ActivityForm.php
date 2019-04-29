@@ -91,4 +91,44 @@ class ActivityForm extends Model
         return $repeat_types;
     }
 
+    /**
+     * @return \DateTime|null
+     */
+    public function getDateStartDateTime()
+    {
+        if ($this->date_start) {
+            if ($date = \DateTime::createFromFormat('d.m.Y', $this->date_start)) {
+                $date->setTime(0, 0, 0);
+                return $date;
+            }
+        }
+
+        return null;
+    }
+
+    public function setDateStartFromDateTime(\DateTime $date)
+    {
+        $this->date_start = $date->format('d.m.Y');
+    }
+
+    /**
+     * @return \DateTime|null
+     */
+    public function getDateEndDateTime()
+    {
+        if ($this->date_end) {
+            if ($date = \DateTime::createFromFormat('d.m.Y', $this->date_end)) {
+                $date->setTime(23, 59, 59);
+                return $date;
+            }
+        }
+
+        return null;
+    }
+
+    public function setDateEndFromDateTime(\DateTime $date)
+    {
+        $this->date_end = $date->format('d.m.Y');
+    }
+
 }

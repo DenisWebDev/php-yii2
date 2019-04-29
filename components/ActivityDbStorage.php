@@ -59,11 +59,10 @@ class ActivityDbStorage extends Component implements IActivityStorage
 
         $activity->setAttributes($model->getAttributes($model->commonFields), false);
 
-        $activity->date_start = \DateTime::createFromFormat('d.m.Y', $model->date_start)
-            ->format('Y-m-d 0:0:0');
-        if ($model->date_end) {
-            $activity->date_end = \DateTime::createFromFormat('d.m.Y', $model->date_end)
-                ->format('Y-m-d 23:59:59');
+        $activity->date_start = $model->getDateStartDateTime()->format('Y-m-d H:i:s');
+
+        if ($date = $model->getDateEndDateTime()) {
+            $activity->date_end = $date->format('Y-m-d H:i:s');
         }
 
         $transaction = \Yii::$app->db->beginTransaction();
@@ -115,12 +114,12 @@ class ActivityDbStorage extends Component implements IActivityStorage
 
             $form->setAttributes($activity->getAttributes($form->commonFields), false);
 
-            $form->date_start = \DateTime::createFromFormat('Y-m-d H:i:s', $activity->date_start)
-                ->format('d.m.Y');
+            $form->setDateStartFromDateTime(\DateTime::createFromFormat('Y-m-d H:i:s', $activity->date_start));
+
             if ($activity->date_end) {
-                $form->date_end = \DateTime::createFromFormat('Y-m-d H:i:s', $activity->date_end)
-                    ->format('d.m.Y');
+                $form->setDateEndFromDateTime(\DateTime::createFromFormat('Y-m-d H:i:s', $activity->date_end));
             }
+
             foreach ($activity->activityImages as $image) {
                 $form->images[] = $image['name'];
             }
