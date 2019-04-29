@@ -32,7 +32,10 @@ $config = [
     ],
     'container'=>[
         'singletons'=> [
-            'app\base\IActivityStorage' => ['class' => '\app\components\ActivityDbStorage'],
+            'app\base\IActivityStorage' => [
+                'class' => '\app\components\ActivityDbStorage',
+                'modelClass' => 'app\models\Activity'
+            ],
         ],
         'definitions'=>[]
     ],

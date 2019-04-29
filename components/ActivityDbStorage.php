@@ -18,6 +18,29 @@ use yii\helpers\ArrayHelper;
 
 class ActivityDbStorage extends Component implements IActivityStorage
 {
+    public $modelClass;
+
+    /**
+     * @throws \Exception
+     */
+    public function init()
+    {
+        parent::init();
+
+        if (!$this->modelClass) {
+            throw new \Exception('Need modelClass param');
+        }
+    }
+
+
+    /**
+     * @return Activity
+     */
+    public function getModel()
+    {
+        return new $this->modelClass();
+    }
+
     /**
      * @param $model
      * @return bool|int
@@ -26,12 +49,12 @@ class ActivityDbStorage extends Component implements IActivityStorage
     public function save(ActivityForm $model)
     {
         if ($model->id) {
-            $activity = Activity::findOne($model->id);
+            $activity = $this->getModel()::findOne($model->id);
             if ($activity === null) {
                 return false;
             }
         } else {
-            $activity = new Activity();
+            $activity = $this->getModel();
         }
 
         $activity->setAttributes($model->getAttributes($model->commonFields), false);
@@ -82,7 +105,7 @@ class ActivityDbStorage extends Component implements IActivityStorage
 
     public function find($id)
     {
-        return Activity::findOne($id);
+        return $this->getModel()::findOne($id);
     }
 
     public function loadForm($id)
@@ -111,7 +134,7 @@ class ActivityDbStorage extends Component implements IActivityStorage
 
     public function getActivities($options = [])
     {
-        $query = (new Activity())::find();
+        $query = $this->getModel()::find();
 
         $query->leftJoin('user', 'user.id = activity.user_id');
 

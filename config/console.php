@@ -24,7 +24,10 @@ $config = [
     ],
     'container'=>[
         'singletons'=> [
-            'app\base\IActivityStorage' => ['class' => '\app\components\ActivityDbStorage'],
+            'app\base\IActivityStorage' => [
+                'class' => '\app\components\ActivityDbStorage',
+                'modelClass' => 'app\models\Activity'
+            ],
             'app\base\INotification' => ['class' => '\app\components\NotificationComponent'],
             'notification'=> ['class'=>'app\base\INotification'],
             'app\base\ILogger' => ['class' => '\app\components\ConsoleLogger'],
