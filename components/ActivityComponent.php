@@ -13,13 +13,10 @@ use app\base\IActivityStorage;
 use app\models\ActivityForm;
 use yii\base\Component;
 use yii\base\UserException;
-use yii\helpers\FileHelper;
 
 class ActivityComponent extends Component
 {
-    public $activityModel;
-
-    public $activityFormModel;
+    public $modelFormClass;
 
     private $storage;
 
@@ -30,12 +27,24 @@ class ActivityComponent extends Component
     }
 
     /**
+     * @throws \Exception
+     */
+    public function init()
+    {
+        parent::init();
+
+        if (!$this->modelFormClass) {
+            throw new \Exception('Need modelFormClass param');
+        }
+    }
+
+    /**
      * @param null|integer $id
      * @return bool|ActivityForm
      */
     public function getActivityFormModel($id = null) {
         if ($id === null) {
-           return new ActivityForm();
+           return new $this->modelFormClass();
         }
         if ($form = $this->storage->loadForm($id)) {
             return $form;
@@ -51,7 +60,7 @@ class ActivityComponent extends Component
      * @throws \yii\base\InvalidConfigException
      * @throws \yii\base\Exception
      */
-    public function saveActivity($model) {
+    public function saveActivity(ActivityForm $model) {
         if (!$model->validate() or !$this->loadImages($model)) {
             return false;
         }
@@ -69,7 +78,7 @@ class ActivityComponent extends Component
      * @throws \yii\base\InvalidConfigException
      * @throws \yii\base\Exception
      */
-    private function loadImages($model)
+    private function loadImages(ActivityForm $model)
     {
         $component = \Yii::createObject([
             'class' => ImageLoaderComponent::class

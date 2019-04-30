@@ -20,6 +20,8 @@ class ActivityDbStorage extends Component implements IActivityStorage
 {
     public $modelClass;
 
+    public $modelFormClass;
+
     /**
      * @throws \Exception
      */
@@ -30,6 +32,10 @@ class ActivityDbStorage extends Component implements IActivityStorage
         if (!$this->modelClass) {
             throw new \Exception('Need modelClass param');
         }
+
+        if (!$this->modelFormClass) {
+            throw new \Exception('Need modelFormClass param');
+        }
     }
 
 
@@ -39,6 +45,14 @@ class ActivityDbStorage extends Component implements IActivityStorage
     public function getModel()
     {
         return new $this->modelClass();
+    }
+
+    /**
+     * @return ActivityForm
+     */
+    public function getFormModel()
+    {
+        return new $this->modelFormClass();
     }
 
     /**
@@ -110,7 +124,7 @@ class ActivityDbStorage extends Component implements IActivityStorage
     public function loadForm($id)
     {
         if ($activity = $this->find($id)) {
-            $form = new ActivityForm();
+            $form = $this->getFormModel();
 
             $form->setAttributes($activity->getAttributes($form->commonFields), false);
 

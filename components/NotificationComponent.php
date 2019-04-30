@@ -6,7 +6,6 @@ namespace app\components;
 use app\base\ILogger;
 use app\base\INotification;
 use yii\base\Component;
-use yii\console\Application;
 use yii\mail\MailerInterface;
 
 class NotificationComponent extends Component implements INotification
@@ -35,15 +34,11 @@ class NotificationComponent extends Component implements INotification
                 $activity->date_start,
                 $activity->description)
             ) {
-                if (\Yii::$app instanceof Application) {
-                    $this->logger->success('Успешно отправлено письмо на '.$activity->user->email);
-                }
+                $this->logger->success('Успешно отправлено письмо на '.$activity->user->email);
             } else {
-                if (\Yii::$app instanceof Application) {
-                    $this->logger->error('Ошибка отправки на '.$activity->user->email);
-                    if (YII_DEBUG) {
-                        $this->logger->error($this->sendError);
-                    }
+                $this->logger->error('Ошибка отправки на '.$activity->user->email);
+                if (YII_DEBUG) {
+                    $this->logger->error($this->sendError);
                 }
             }
         }

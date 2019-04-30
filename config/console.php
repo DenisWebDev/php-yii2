@@ -26,7 +26,8 @@ $config = [
         'singletons'=> [
             'app\base\IActivityStorage' => [
                 'class' => '\app\components\ActivityDbStorage',
-                'modelClass' => 'app\models\Activity'
+                'modelClass' => 'app\models\Activity',
+                'modelFormClass' => 'app\models\ActivityForm',
             ],
             'app\base\INotification' => ['class' => '\app\components\NotificationComponent'],
             'notification'=> ['class'=>'app\base\INotification'],
@@ -36,7 +37,8 @@ $config = [
     ],
     'components' => [
         'activity' => [
-            'class' => '\app\components\ActivityComponent'
+            'class' => '\app\components\ActivityComponent',
+            'modelFormClass' => 'app\models\ActivityForm',
         ],
         'auth' => [
             'class' => 'app\modules\auth\components\AuthComponent',

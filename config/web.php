@@ -34,14 +34,16 @@ $config = [
         'singletons'=> [
             'app\base\IActivityStorage' => [
                 'class' => '\app\components\ActivityDbStorage',
-                'modelClass' => 'app\models\Activity'
+                'modelClass' => 'app\models\Activity',
+                'modelFormClass' => 'app\models\ActivityForm',
             ],
         ],
         'definitions'=>[]
     ],
     'components' => [
         'activity' => [
-            'class' => '\app\components\ActivityComponent'
+            'class' => '\app\components\ActivityComponent',
+            'modelFormClass' => 'app\models\ActivityForm',
         ],
         'request' => [
             // !!! insert a secret key in the following (if it is empty) - this is required by cookie validation
